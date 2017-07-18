@@ -1,4 +1,4 @@
-# sbr-ch-api
+# sbr-ch-data-api
 An API for use by sbr-api for accessing Company House data
 
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
@@ -25,7 +25,7 @@ https://noobergeek.wordpress.com/2013/11/09/simplest-way-to-install-and-configur
 
 ## Running
 
-To run the `sbr-ch-api`, run the following:
+To run the `sbr-ch-data-api`, run the following:
 
 ``` shell
 sbt api/run -Denvironment=local
@@ -47,4 +47,4 @@ See [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 Copyright ©‎ 2017, Office for National Statistics (https://www.ons.gov.uk)
 
-Released under MIT license, see [LICENSE](LICENSE.md) for details.
+Released under MIT license, see [LICENSE](LICENSE) for details.
