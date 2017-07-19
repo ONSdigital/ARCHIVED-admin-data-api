@@ -1,7 +1,12 @@
+import java.io.File
+
 import com.google.inject.AbstractModule
 import java.time.Clock
 
+import com.typesafe.config.{ Config, ConfigFactory }
+import play.api.{ Configuration, Environment }
 import services.{ ApplicationTimer, AtomicCounter, Counter, LoadCsvData }
+import config.SbrConfigManager
 
 /**
  * This class is a Guice module that tells Guice how to bind several
@@ -13,9 +18,11 @@ import services.{ ApplicationTimer, AtomicCounter, Counter, LoadCsvData }
  * adding `play.modules.enabled` settings to the `application.conf`
  * configuration file.
  */
-class Module extends AbstractModule {
+class Module(environment: Environment, configuration: Configuration) extends AbstractModule {
 
   override def configure() = {
+    val config = SbrConfigManager.envConf(ConfigFactory.load())
+    bind(classOf[Config]).toInstance(config)
     // Bind the CSV data, make it accessible through @Inject()
     bind(classOf[LoadCsvData]).asEagerSingleton()
     // Use the system clock as the default implementation of Clock

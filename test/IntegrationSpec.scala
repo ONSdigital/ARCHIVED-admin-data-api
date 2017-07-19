@@ -2,35 +2,34 @@ package test
 
 import play.api.test.Helpers._
 
-/**
- * Created by haqa on 14/07/2017.
- */
 class IntegrationSpec extends TestUtils {
 
-  "Query Response" should {
+  "Get by company number" should {
 
-    "get by anonymous vatref" in {
-      val vat = 175956654000L
-      val res = fakeRequest(s"/v1/suggest?id=${vat}")
+    "return correct company" in {
+      val companyNumber = "19384720"
+      val res = fakeRequest(s"/v1/company?id=${companyNumber}")
       status(res) mustBe OK
       contentType(res) mustBe Some("application/json")
-      //      val found = getJsValue(contentAsJson(res) \ "vatref")
-      //      val source = getJsValue(contentAsJson(res) \ "source")
-      //      found must include(vat.toString)
-      //      source.toLowerCase mustBe "vat"
+      val returnedCrn = getJsValueString(contentAsJson(res) \ "company_number")
+      val addressSize = getJsValueSize(contentAsJson(res) \ "address")
+      returnedCrn must be(companyNumber)
+      // Check we have nested JSON for the address
+      addressSize must be > 1
     }
 
-    "check if multiple records return" ignore {
-      val id = 825039145000L
-      val res = fakeRequest(s"/v1/suggest?id=${id}")
-      status(res) mustBe OK
+    "return 404 if company is not found" in {
+      val companyNumber = "12345678"
+      val res = fakeRequest(s"/v1/company?id=${companyNumber}")
+      status(res) mustBe NOT_FOUND
       contentType(res) mustBe Some("application/json")
-      val found = getJsValue(contentAsJson(res) \ "vatref")
-      found must include(id.toString)
-      //      val rec = toCount(res)
-      //      rec.length mustBe > (1)
+    }
 
+    "return 400 if the query is malformed" in {
+      val companyNumber = "19384720"
+      val res = fakeRequest(s"/v1/company?id${companyNumber}")
+      status(res) mustBe BAD_REQUEST
+      contentType(res) mustBe Some("application/json")
     }
   }
-
 }

@@ -34,8 +34,8 @@ class RouteSpec extends TestUtils {
   }
 
   "SearchController" should {
-    "return some records" in {
-      val suggest = fakeRequest(s"/v1/suggest?id=")
+    "return missing parameter error" in {
+      val suggest = fakeRequest(s"/v1/company?id=")
       status(suggest) mustBe BAD_REQUEST
       contentType(suggest) mustBe Some("application/json")
       val err_code: String = getJsValue(contentAsJson(suggest) \ "code")
@@ -59,14 +59,4 @@ class RouteSpec extends TestUtils {
       contentAsString(health).toLowerCase must include("status: ok")
     }
   }
-
-  // note: in progress route
-  "LastUpdateController" should {
-    "display last modification listing" ignore {
-      val last = fakeRequest("/latest", GET)
-      status(last) mustBe NOT_FOUND
-      contentType(last) mustBe Some("application/json")
-    }
-  }
-
 }

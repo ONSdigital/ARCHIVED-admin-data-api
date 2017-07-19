@@ -6,6 +6,7 @@ import utils.Utilities._
 import com.outworkers.util.play._
 import javax.inject.Inject
 
+import com.typesafe.config.Config
 import play.api.Logger
 import models.CompanyHouseObj
 import services.LoadCsvData
@@ -14,7 +15,7 @@ import services.LoadCsvData
  * Created by coolit on 18/07/2017.
  */
 @Api("Search")
-class SearchController @Inject() (loadCsvData: LoadCsvData) extends ControllerUtils {
+class SearchController @Inject() (loadCsvData: LoadCsvData, val config: Config) extends ControllerUtils {
 
   @ApiOperation(
     value = "JSON of the matching company",
