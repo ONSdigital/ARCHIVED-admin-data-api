@@ -11,10 +11,7 @@ An API for use by sbr-api for accessing Company House data
 
 ## Environment Setup
 
-* Java 8 or higher
-
-https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_jdk.html
-
+* Java 8 or higher (https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_jdk.html)
 * SBT (http://www.scala-sbt.org/)
 
 ```shell
