@@ -5,11 +5,21 @@ An API for use by sbr-api for accessing Company House data
 
 ## API Endpoints
 
-Table of endpoints
+| method | endpoint             | parameters         | example                     |
+|--------|----------------------|--------------------|-----------------------------|
+| GET    | /v1/company?id=${id} | id: company_number | GET /v1/company?id=AB123456 |
 
 ## Environment Setup
 
-### SBT
+* Java 8 or higher
+
+https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_jdk.html
+
+* SBT (http://www.scala-sbt.org/)
+
+```shell
+brew install sbt
+```
 
 ### Hive & Hadoop
 
