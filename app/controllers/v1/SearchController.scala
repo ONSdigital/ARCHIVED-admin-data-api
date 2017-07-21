@@ -10,6 +10,20 @@ import com.typesafe.config.Config
 import play.api.Logger
 import models.CompanyHouseObj
 import services.LoadCsvData
+import play.api.db._
+import org.apache.spark.SparkContext
+import org.apache.spark.SparkConf
+import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.deploy.SparkHadoopUtil
+import org.apache.hadoop.fs.{ FileSystem, Path }
+
+import org.apache.spark.sql.SQLContext
+
+import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.DriverManager;
 
 /**
  * Created by coolit on 18/07/2017.
@@ -41,6 +55,22 @@ class SearchController @Inject() (loadCsvData: LoadCsvData, val config: Config) 
         case _ => BadRequest(errAsJson(400, "missing parameter", "No query string found")).future
       }
       res
+    }
+  }
+
+  def test(): Action[AnyContent] = {
+    Action.async { implicit request =>
+      Class.forName("org.apache.hive.jdbc.HiveDriver");
+      Logger.info(s"Getting db connection...")
+      val con = DriverManager.getConnection("jdbc:hive2://localhost:10000/default", "raj_ops", "password");
+      val stmt = con.createStatement();
+      val sql = "SELECT * FROM sample_07";
+      System.out.println("Running: " + sql);
+      val res = stmt.executeQuery(sql);
+      while (res.next()) {
+        println(res.getString(1), res.getString(2), res.getString(3));
+      }
+      Ok("Done.").future
     }
   }
 }

@@ -11,6 +11,8 @@ lazy val Versions = new {
   val util = "0.27.8"
 }
 
+unmanagedJars in Compile += file("./lib/hive-exec-2.1.1.jar")
+
 
 lazy val Constant = new {
   val appName = "ons-sbr-ch-api"
@@ -77,6 +79,7 @@ lazy val api = (project in file("."))
     buildInfoPackage := "controllers",
     libraryDependencies ++= Seq (
       filters,
+      jdbc,
       "org.webjars"                  %%    "webjars-play"        %    "2.5.0-3",
       "com.typesafe.scala-logging"   %%    "scala-logging"       %    "3.5.0",
       "com.outworkers"               %%    "util-parsers-cats"   %    Versions.util,
@@ -84,7 +87,14 @@ lazy val api = (project in file("."))
       "com.outworkers"               %%    "util-testing"        %    Versions.util     % Test,
       "org.scalatestplus.play"       %%    "scalatestplus-play"  %    "2.0.0"           % Test,
       "io.swagger"                   %%    "swagger-play2"       %    "1.5.3",
-      "org.webjars"                  %     "swagger-ui"          %    "2.2.10-1"
+      "org.webjars"                  %     "swagger-ui"          %    "2.2.10-1",
+      "org.apache.hive"              %     "hive-jdbc"           %    "1.2.1",
+      "org.apache.spark"             %     "spark-core_2.11"     %    "2.1.0",
+      "org.apache.spark"             %     "spark-sql_2.11"      %    "2.1.0",
+      "org.apache.spark"             %     "spark-hive_2.11"     %    "2.1.0",
+      "org.apache.spark"              % "spark-mllib_2.11" % "2.1.0",
+      "org.apache.hadoop"            % "hadoop-client" % "2.1.0",
+      "mysql" % "mysql-connector-java" % "5.1.35"
     ),
     assemblyJarName in assembly := "sbr-ch-data-api.jar",
     assemblyMergeStrategy in assembly := {

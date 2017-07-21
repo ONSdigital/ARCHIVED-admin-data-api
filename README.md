@@ -18,17 +18,16 @@ An API for use by sbr-api for accessing Company House data
 brew install sbt
 ```
 
-### Hive & Hadoop
+### Getting Company House data into Hive
 
-Install Hadoop first (this takes a while) before installing Hive.
+To reduce complications with installing & configuring Hadoop and Hive, we use a Hortonworks Sandbox in VirtualBox, which we load the Company House data into.
 
-```shell
-brew install hadoop
-brew install hive
-```
+1. Download and install VirtualBox (https://www.virtualbox.org/wiki/Downloads)
+2. Download the Hortonworks Hadoop Sandbox for VirtualBox (https://hortonworks.com/downloads/#sandbox)
 
-Useful link:
-https://noobergeek.wordpress.com/2013/11/09/simplest-way-to-install-and-configure-hive-for-mac-osx-lion/
+Useful links:
+
+http://download.companieshouse.gov.uk/en_output.html
 
 ## Running
 
