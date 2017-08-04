@@ -5,9 +5,9 @@ An API for use by sbr-api for accessing Company House data
 
 ## API Endpoints
 
-| method | endpoint             | parameters         | example                     |
-|--------|----------------------|--------------------|-----------------------------|
-| GET    | /v1/company?id=${id} | id: company_number | GET /v1/company?id=AB123456 |
+| method | endpoint                                   | parameters                    | example                                |
+|--------|--------------------------------------------|-------------------------------|----------------------------------------|
+| GET    | /v1/company?companyNumber=${companyNumber} | companyNumber: company_number | GET /v1/company?companyNumber=AB123456 |
 
 ## Environment Setup
 
