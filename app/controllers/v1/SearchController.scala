@@ -10,7 +10,9 @@ import com.typesafe.config.Config
 import play.api.Logger
 import models.{ Company, CompanyObj }
 import services.LoadCsvData
-import java.sql.DriverManager
+import java.sql.{ Connection, DriverManager, ResultSet, Statement }
+
+import utils.RsIterator
 
 /**
  * Created by coolit on 18/07/2017.
@@ -37,6 +39,7 @@ class SearchController @Inject() (loadCsvData: LoadCsvData, val config: Config) 
       val res = companyNumber match {
         case Some(companyNumber) if companyNumber.length > 0 => loadCsvData.ch.filter(_.CompanyNumber == s""""$companyNumber"""") match {
           case Nil => NotFound(errAsJson(404, "not found", s"Could not find value ${companyNumber}")).future
+          case _ :: _ :: Nil => InternalServerError(errAsJson(500, "internal server error", s"more than one result returned for companyNumber: $companyNumber")).future
           case x => Ok(CompanyObj.toJson(x(0))).future
         }
         case _ => BadRequest(errAsJson(400, "missing parameter", "No query string found")).future
@@ -51,6 +54,7 @@ class SearchController @Inject() (loadCsvData: LoadCsvData, val config: Config) 
       val res = companyNumber match {
         case Some(companyNumber) if companyNumber.length > 0 => getCompanyFromDb(companyNumber) match {
           case Nil => NotFound(errAsJson(404, "not found", s"Could not find value ${companyNumber}")).future
+          case _ :: _ :: Nil => InternalServerError(errAsJson(500, "internal server error", s"more than one result returned for companyNumber: $companyNumber")).future
           case x => Ok(CompanyObj.toJson(x.head)).future
         }
         case _ => BadRequest(errAsJson(400, "missing parameter", "No query string found")).future
@@ -64,44 +68,45 @@ class SearchController @Inject() (loadCsvData: LoadCsvData, val config: Config) 
     val driver: String = "org.apache.hive.jdbc.HiveDriver"
     val username: String = "raj_ops"
     val password: String = "password"
-    val query: String = s"""SELECT * FROM company_house WHERE companynumber = '"$companyNumber"' LIMIT 1"""
+    val query: String = s"""SELECT * FROM ch WHERE companynumber = '"$companyNumber"' LIMIT 1"""
 
     try {
       Class.forName(driver)
-      val connection = DriverManager.getConnection(url, username, password)
-      val statement = connection.createStatement
-      val rs = statement.executeQuery(query)
-      rs.next
+      val connection: Connection = DriverManager.getConnection(url, username, password)
+      val statement: Statement = connection.createStatement
+      val rs: ResultSet = statement.executeQuery(query)
+      val listOfCompanies: List[Company] = new RsIterator(rs).map(x => {
+        Company(
+          x.getString(1), // CompanyName
+          x.getString(2), // CompanyNumber
+          x.getString(11), // CompanyCategory
+          x.getString(12), // CompanyStatus
+          x.getString(13), // CountryOfOrigin
+          x.getString(15), // IncorporationDate
+          // Address
+          x.getString(5), // AddressLine1
+          x.getString(6), // AddressLine2
+          x.getString(7), // PostTown
+          x.getString(8), // County
+          x.getString(9), // Postcode
+          // Accounts
+          x.getString(16), // AccountRefDay
+          x.getString(17), // AccountRefMonth
+          x.getString(18), // AccountNextDueDate
+          x.getString(19), // AccountLastMadeUpDate
+          x.getString(20), // AccountCategory
+          // Returns
+          x.getString(21), // ReturnsNextDueDate
+          x.getString(22), // ReturnsLastMadeUpDate
+          // Sic
+          x.getString(27), // SICCodeSicText1
+          x.getString(28), // SICCodeSicText2
+          x.getString(29), // SICCodeSicText3
+          x.getString(30) // SICCodeSicText4
+        )
+      }).toList
       connection.close
-      List(Company(
-        // Primary Topic
-        rs.getString(1), // CompanyName
-        rs.getString(2), // CompanyNumber
-        rs.getString(11), // CompanyCategory
-        rs.getString(12), // CompanyStatus
-        rs.getString(13), // CountryOfOrigin
-        rs.getString(15), // IncorporationDate
-        // Address
-        rs.getString(5), // AddressLine1
-        rs.getString(6), // AddressLine2
-        rs.getString(7), // PostTown
-        rs.getString(8), // County
-        rs.getString(9), // Postcode
-        // Accounts
-        rs.getString(16), // AccountRefDay
-        rs.getString(17), // AccountRefMonth
-        rs.getString(18), // AccountNextDueDate
-        rs.getString(19), // AccountLastMadeUpDate
-        rs.getString(20), // AccountCategory
-        // Returns
-        rs.getString(21), // ReturnsNextDueDate
-        rs.getString(22), // ReturnsLastMadeUpDate
-        // Sic
-        rs.getString(27), // SICCodeSicText1
-        rs.getString(28), // SICCodeSicText2
-        rs.getString(29), // SICCodeSicText3
-        rs.getString(30) // SICCodeSicText4
-      ))
+      listOfCompanies
     } catch {
       case e: Exception => {
         Logger.info(e.toString)

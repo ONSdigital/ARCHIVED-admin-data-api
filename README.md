@@ -36,6 +36,20 @@ Once the VM is running, you should be able to go to `localhost:8888` to see the 
 2. Unzip it
 3. Replace the header with 'Clean CSV Headers' section from the [CH Readme](CH.md)
 4. Follow the instructions [here](https://hortonworks.com/hadoop-tutorial/how-to-use-hcatalog-basic-pig-hive-commands/#download-example-data), use the table definition from the [CH Readme](CH.md)
+5. Test it works using the following query:
+
+```SQL
+SELECT * FROM company_house;
+```
+
+6. Create a table using the Parquet data format (this speeds things up quite a bit):
+
+```SQL
+set hive.execution.engine=mr;
+CREATE TABLE ch STORED AS PARQUET AS SELECT * FROM company_house;
+```
+
+This will take some time.
 
 ## Running
 

@@ -43,6 +43,7 @@ object CompanyObj {
       val sicText = List(c.SICCodeSicText1, c.SICCodeSicText2, c.SICCodeSicText3, c.SICCodeSicText4).filter(
         _ != "\"\""
       )
+      // We use a similar JSON format to the one used by CompanyHouse, found here: /models/ch.json
       Json.obj(
         "CompanyName" -> c.CompanyName,
         "CompanyNumber" -> c.CompanyNumber,
