@@ -73,7 +73,7 @@ class SearchController @Inject() (loadCsvData: LoadCsvData, val config: Config) 
     val driver: String = "org.apache.hive.jdbc.HiveDriver"
     val username: String = "raj_ops"
     val password: String = "password"
-    val query: String = s"""SELECT * FROM company_house WHERE companynumber = '"$companyNumber"'"""
+    val query: String = s"""SELECT * FROM company_house WHERE companynumber = '"$companyNumber"' LIMIT 1"""
 
     try {
       Class.forName(driver)
@@ -81,10 +81,36 @@ class SearchController @Inject() (loadCsvData: LoadCsvData, val config: Config) 
       val statement = connection.createStatement
       val rs = statement.executeQuery(query)
       rs.next
-      val name = rs.getString(1)
-      val id = rs.getString(2)
       connection.close
-      List(Company(id, name))
+      List(Company(
+        // Primary Topic
+        rs.getString(1), // CompanyName
+        rs.getString(2), // CompanyNumber
+        rs.getString(11), // CompanyCategory
+        rs.getString(12), // CompanyStatus
+        rs.getString(13), // CountryOfOrigin
+        rs.getString(15), // IncorporationDate
+        // Address
+        rs.getString(5), // AddressLine1
+        rs.getString(6), // AddressLine2
+        rs.getString(7), // PostTown
+        rs.getString(8), // County
+        rs.getString(9), // Postcode
+        // Accounts
+        rs.getString(16), // AccountRefDay
+        rs.getString(17), // AccountRefMonth
+        rs.getString(18), // AccountNextDueDate
+        rs.getString(19), // AccountLastMadeUpDate
+        rs.getString(20), // AccountCategory
+        // Returns
+        rs.getString(21), // ReturnsNextDueDate
+        rs.getString(22), // ReturnsLastMadeUpDate
+        // Sic
+        rs.getString(27), // SICCodeSicText1
+        rs.getString(28), // SICCodeSicText2
+        rs.getString(29), // SICCodeSicText3
+        rs.getString(30) // SICCodeSicText4
+      ))
     } catch {
       case e: Exception => {
         Logger.info(e.toString)
@@ -95,16 +121,68 @@ class SearchController @Inject() (loadCsvData: LoadCsvData, val config: Config) 
 }
 
 case class Company(
-  company_number: String,
-  company_name: String
+  CompanyName: String,
+  CompanyNumber: String,
+  CompanyCategory: String,
+  CompanyStatus: String,
+  CountryOfOrigin: String,
+  IncorporationDate: String,
+  // Address
+  AddressLine1: String,
+  AddressLine2: String,
+  PostTown: String,
+  County: String,
+  Postcode: String,
+  // Accounts
+  AccountRefDay: String,
+  AccountRefMonth: String,
+  AccountNextDueDate: String,
+  AccountLastMadeUpDate: String,
+  AccountCategory: String,
+  // Returns
+  ReturnsNextDueDate: String,
+  ReturnsLastMadeUpDate: String,
+  // SIC
+  SICCodeSicText1: String,
+  SICCodeSicText2: String,
+  SICCodeSicText3: String,
+  SICCodeSicText4: String
 )
 
 object CompanyObj {
   implicit val writer = new Writes[Company] {
-    def writes(t: Company): JsValue = {
+    def writes(c: Company): JsValue = {
+      val sicText = List(c.SICCodeSicText1, c.SICCodeSicText2, c.SICCodeSicText3, c.SICCodeSicText4).filter(
+        _ != "\"\""
+      )
       Json.obj(
-        "company_number" -> t.company_number,
-        "company_name" -> t.company_name
+        "CompanyName" -> c.CompanyName,
+        "CompanyNumber" -> c.CompanyNumber,
+        "CompanyCategory" -> c.CompanyCategory,
+        "CompanyStatus" -> c.CompanyStatus,
+        "CountryOfOrigin" -> c.CountryOfOrigin,
+        "IncorporationDate" -> c.IncorporationDate,
+        "Address" -> Json.obj(
+          "AddressLine1" -> c.AddressLine1,
+          "AddressLine2" -> c.AddressLine2,
+          "PostTown" -> c.PostTown,
+          "County" -> c.County,
+          "Postcode" -> c.Postcode
+        ),
+        "Accounts" -> Json.obj(
+          "AccountRefDay" -> c.AccountRefDay,
+          "AccountRefMonth" -> c.AccountRefMonth,
+          "AccountNextDueDate" -> c.AccountNextDueDate,
+          "AccountLastMadeUpDate" -> c.AccountLastMadeUpDate,
+          "AccountCategory" -> c.AccountCategory
+        ),
+        "Returns" -> Json.obj(
+          "ReturnsNextDueDate" -> c.ReturnsNextDueDate,
+          "ReturnsLastMadeUpDate" -> c.ReturnsLastMadeUpDate
+        ),
+        "SICCodes" -> Json.obj(
+          "SicText" -> sicText
+        )
       )
     }
   }
@@ -112,8 +190,28 @@ object CompanyObj {
   def toJson(company: Company): JsValue = {
     Json.toJson(
       Company(
-        company.company_number,
-        company.company_name
+        company.CompanyName,
+        company.CompanyNumber,
+        company.CompanyCategory,
+        company.CompanyStatus,
+        company.CountryOfOrigin,
+        company.IncorporationDate,
+        company.AddressLine1,
+        company.AddressLine2,
+        company.PostTown,
+        company.County,
+        company.Postcode,
+        company.AccountRefDay,
+        company.AccountRefMonth,
+        company.AccountNextDueDate,
+        company.AccountLastMadeUpDate,
+        company.AccountCategory,
+        company.ReturnsNextDueDate,
+        company.ReturnsLastMadeUpDate,
+        company.SICCodeSicText1,
+        company.SICCodeSicText2,
+        company.SICCodeSicText3,
+        company.SICCodeSicText4
       )
     )
   }

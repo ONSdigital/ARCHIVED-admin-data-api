@@ -53,6 +53,14 @@ To assemble the code + all dependancies into a fat .jar, run the following:
 sbt assembly
 ```
 
+## Environments
+
+### Local - CSV
+
+### Local - Hortonworks VM
+
+### Deployed
+
 ## Contributing
 
 See [CONTRIBUTING](CONTRIBUTING.md) for details.
