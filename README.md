@@ -5,9 +5,9 @@ An API for use by sbr-api for accessing Company House data
 
 ## API Endpoints
 
-| method | endpoint                                   | parameters                    | example                                |
-|--------|--------------------------------------------|-------------------------------|----------------------------------------|
-| GET    | /v1/company?companyNumber=${companyNumber} | companyNumber: company_number | GET /v1/company?companyNumber=AB123456 |
+| method | endpoint                                   | example                                |
+|--------|--------------------------------------------|----------------------------------------|
+| GET    | /v1/company?companyNumber=${companyNumber} | GET /v1/company?companyNumber=AB123456 |
 
 ## Environment Setup
 
@@ -56,8 +56,16 @@ This will take some time.
 To run the `sbr-ch-data-api`, run the following:
 
 ``` shell
-sbt api/run -Denvironment=local
+sbt api/run -Dsource=csv
 ```
+
+Swap `source` with any of the values in the table below:
+
+| -Dsource value | Data Access                                                                                     |
+|----------------|-------------------------------------------------------------------------------------------------|
+| csv            | Local [CSV file](./conf/sample/company_house_data.csv) (first 10,000 rows of CompanyHouse data) |
+| hiveLocal      | Hive which runs inside the Hortonworks VM (setup described above)                               |
+| hiveCloudera   | Hive which runs on Cloudera (requires Kerboros setup etc.)                                      |
 
 ## Assembly
 
@@ -67,13 +75,7 @@ To assemble the code + all dependancies into a fat .jar, run the following:
 sbt assembly
 ```
 
-## Environments
-
-### Local - CSV
-
-### Local - Hortonworks VM
-
-### Deployed
+## Testing
 
 ## Contributing
 
