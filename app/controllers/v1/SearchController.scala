@@ -11,10 +11,6 @@ import play.api.Logger
 import models.{ CompanyHouseAddress, CompanyHouseJson, CompanyHouseObj }
 import services.LoadCsvData
 import play.api.db._
-import org.apache.spark.SparkContext
-import org.apache.spark.SparkConf
-import org.apache.spark.sql.hive.HiveContext
-import org.apache.spark.deploy.SparkHadoopUtil
 import org.apache.hadoop.fs.{ FileSystem, Path }
 import org.apache.spark.sql.SQLContext
 import java.sql.SQLException

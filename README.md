@@ -18,16 +18,24 @@ An API for use by sbr-api for accessing Company House data
 brew install sbt
 ```
 
+* VirtualBox (https://www.virtualbox.org/wiki/Downloads
+
+### Hortonworks Sandbox VM Setup
+
+To reduce complications with the install/setup of Hive/Hadoop etc, we will be using the Hortonworks Sandbox VM.
+
+1. Download the VM (https://hortonworks.com/downloads/#sandbox)
+2. Import the VM into VirtualBox, use default settings, but use at least 8GB of RAM, preferably 10GB.
+3. Run the VM
+
+Once the VM is running, you should be able to go to `localhost:8888` to see the dashboard.
+
 ### Getting Company House data into Hive
 
-To reduce complications with installing & configuring Hadoop and Hive, we use a Hortonworks Sandbox in VirtualBox, which we load the Company House data into.
-
-1. Download and install VirtualBox (https://www.virtualbox.org/wiki/Downloads)
-2. Download the Hortonworks Hadoop Sandbox for VirtualBox (https://hortonworks.com/downloads/#sandbox)
-
-Useful links:
-
-http://download.companieshouse.gov.uk/en_output.html
+1. Download the Company House data (http://download.companieshouse.gov.uk/en_output.html)
+2. Unzip it
+3. Replace the header with 'Clean CSV Headers' section from the [CH Readme](CH.md)
+4. Follow the instructions [here](https://hortonworks.com/hadoop-tutorial/how-to-use-hcatalog-basic-pig-hive-commands/#download-example-data), use the table definition from the [CH Readme](CH.md)
 
 ## Running
 
