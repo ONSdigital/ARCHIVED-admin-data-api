@@ -55,7 +55,14 @@ class CHData @Inject() (implicit val config: Config) {
     getDbConnection() match {
       case Failure(thrown) => throw new Exception(s"Unable to get company ${companyNumber} from database")
       case Success(con) => {
-        val query: String = s"""SELECT * FROM ch WHERE companynumber = '"$companyNumber"' LIMIT 1"""
+        val cols = List(
+          "CompanyName", "CompanyNumber", "CompanyCategory", "CompanyStatus", "CountryOfOrigin", "IncorporationDate",
+          "RegAddressAddressLine1", "RegAddressAddressLine2", "RegAddressPostTown", "RegAddressCounty",
+          "RegAddressCountry", "AccountsAccountRefDay", "AccountsAccountRefMonth", "AccountsNextDueDate",
+          "AccountsLastMadeUpDate", "AccountsAccountCategory", "ReturnsNextDueDate", "ReturnsLastMadeUpDate",
+          "SICCodeSicText1", "SICCodeSicText2", "SICCodeSicText3", "SICCodeSicText4"
+        ).mkString(", ")
+        val query: String = s"""SELECT ${cols} FROM ch WHERE companynumber = '"$companyNumber"' LIMIT 1"""
         Logger.trace(s"Running query [${query}] on Hive database")
         val statement: Statement = con.createStatement
         val rs: ResultSet = statement.executeQuery(query)
@@ -71,30 +78,30 @@ class CHData @Inject() (implicit val config: Config) {
       Company(
         x.getString(1), // CompanyName
         x.getString(2), // CompanyNumber
-        x.getString(11), // CompanyCategory
-        x.getString(12), // CompanyStatus
-        x.getString(13), // CountryOfOrigin
-        x.getString(15), // IncorporationDate
+        x.getString(3), // CompanyCategory
+        x.getString(4), // CompanyStatus
+        x.getString(5), // CountryOfOrigin
+        x.getString(6), // IncorporationDate
         // Address
-        x.getString(5), // AddressLine1
-        x.getString(6), // AddressLine2
-        x.getString(7), // PostTown
-        x.getString(8), // County
-        x.getString(9), // Postcode
+        x.getString(7), // AddressLine1
+        x.getString(8), // AddressLine2
+        x.getString(9), // PostTown
+        x.getString(10), // County
+        x.getString(11), // Postcode
         // Accounts
-        x.getString(16), // AccountRefDay
-        x.getString(17), // AccountRefMonth
-        x.getString(18), // AccountNextDueDate
-        x.getString(19), // AccountLastMadeUpDate
-        x.getString(20), // AccountCategory
+        x.getString(12), // AccountRefDay
+        x.getString(13), // AccountRefMonth
+        x.getString(14), // AccountNextDueDate
+        x.getString(15), // AccountLastMadeUpDate
+        x.getString(16), // AccountCategory
         // Returns
-        x.getString(21), // ReturnsNextDueDate
-        x.getString(22), // ReturnsLastMadeUpDate
+        x.getString(17), // ReturnsNextDueDate
+        x.getString(18), // ReturnsLastMadeUpDate
         // Sic
-        x.getString(27), // SICCodeSicText1
-        x.getString(28), // SICCodeSicText2
-        x.getString(29), // SICCodeSicText3
-        x.getString(30) // SICCodeSicText4
+        x.getString(19), // SICCodeSicText1
+        x.getString(20), // SICCodeSicText2
+        x.getString(21), // SICCodeSicText3
+        x.getString(22) // SICCodeSicText4
       )
     }).toList
   }

@@ -38,7 +38,10 @@ class SearchController @Inject() (chData: CHData, val config: Config) extends Co
         case companyNumber if companyNumber.length > 0 => chData.getCompanyById(companyNumber) match {
           case Nil => NotFound(errAsJson(404, "not found", s"Could not find value ${companyNumber}")).future
           case _ :: _ :: Nil => InternalServerError(errAsJson(500, "internal server error", s"more than one result returned for companyNumber: $companyNumber")).future
-          case x => Ok(CompanyObj.toJson(x.head)).future
+          case x => {
+            Logger.info(s"Returning company [${companyNumber}]: ${x.head}")
+            Ok(CompanyObj.toJson(x.head)).future
+          }
         }
         case _ => BadRequest(errAsJson(400, "missing parameter", "No query string found")).future
       }
