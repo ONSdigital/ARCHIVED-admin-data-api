@@ -11,11 +11,8 @@ lazy val Versions = new {
   val util = "0.27.8"
 }
 
-unmanagedJars in Compile += file("./lib/hive-exec-2.1.1.jar")
-
-
 lazy val Constant = new {
-  val appName = "ons-sbr-ch-api"
+  val appName = "sbr-admin-data-api"
   val detail = Versions.version
   val organisation = "ons"
   val team = "sbr"
@@ -59,7 +56,7 @@ lazy val api = (project in file("."))
   .settings(
     scalaVersion := Versions.scala,
     name := Constant.appName,
-    moduleName := "sbr-ch-data-api",
+    moduleName := "sbr-admin-data-api",
     version := Versions.version,
     buildInfoPackage := "controllers",
     buildInfoKeys := Seq[BuildInfoKey](
@@ -89,14 +86,10 @@ lazy val api = (project in file("."))
       "io.swagger"                   %%    "swagger-play2"       %    "1.5.3",
       "org.webjars"                  %     "swagger-ui"          %    "2.2.10-1",
       "org.apache.hive"              %     "hive-jdbc"           %    "1.2.1",
-      "org.apache.spark"             %     "spark-core_2.11"     %    "2.1.0",
-      "org.apache.spark"             %     "spark-sql_2.11"      %    "2.1.0",
       "org.apache.spark"             %     "spark-hive_2.11"     %    "2.1.0",
-      "org.apache.spark"              % "spark-mllib_2.11" % "2.1.0",
-      "org.apache.hadoop"            % "hadoop-client" % "2.1.0",
-      "mysql" % "mysql-connector-java" % "5.1.35"
+      "mysql"                        %     "mysql-connector-java" % "5.1.35"
     ),
-    assemblyJarName in assembly := "sbr-ch-data-api.jar",
+    assemblyJarName in assembly := "sbr-admin-data-api.jar",
     assemblyMergeStrategy in assembly := {
       case PathList("META-INF", xs @ _*) => MergeStrategy.discard
       case x => MergeStrategy.first
