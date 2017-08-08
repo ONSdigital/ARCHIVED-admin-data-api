@@ -7,9 +7,10 @@ import scala.io.Source
 import play.api.Logger
 import models.Company
 import utils.RsIterator
-
 import com.typesafe.config.Config
 import javax.inject.Inject
+
+import scala.util.{ Failure, Try, Success }
 
 /**
  * Created by coolit on 07/08/2017.
@@ -39,7 +40,67 @@ class CHData @Inject() (implicit val config: Config) {
     listOfCaseClasses
   }
 
+  def getDbConnection(): Try[Connection] = {
+    val url: String = config.getString("url")
+    val username: String = config.getString("username")
+    val password: String = config.getString("password")
+    Class.forName("org.apache.hive.jdbc.HiveDriver")
+    Logger.trace(s"Creating JDBC connection with url [${url}]")
+    Try(DriverManager.getConnection(url, username, password)).recoverWith {
+      case e: Exception => Failure(new Exception("Unable to create JDBC connection"))
+    }
+  }
+
   def getCompanyFromDb(companyNumber: String): List[Company] = {
+    getDbConnection() match {
+      case Failure(thrown) => throw new Exception(s"Unable to get company ${companyNumber} from database")
+      case Success(con) => {
+        val query: String = s"""SELECT * FROM ch WHERE companynumber = '"$companyNumber"' LIMIT 1"""
+        Logger.trace(s"Running query [${query}] on Hive database")
+        val statement: Statement = con.createStatement
+        val rs: ResultSet = statement.executeQuery(query)
+        val listOfCompanys = rsToCompany(rs)
+        con.close
+        listOfCompanys
+      }
+    }
+  }
+
+  def rsToCompany(rs: ResultSet): List[Company] = {
+    new RsIterator(rs).map(x => {
+      Company(
+        x.getString(1), // CompanyName
+        x.getString(2), // CompanyNumber
+        x.getString(11), // CompanyCategory
+        x.getString(12), // CompanyStatus
+        x.getString(13), // CountryOfOrigin
+        x.getString(15), // IncorporationDate
+        // Address
+        x.getString(5), // AddressLine1
+        x.getString(6), // AddressLine2
+        x.getString(7), // PostTown
+        x.getString(8), // County
+        x.getString(9), // Postcode
+        // Accounts
+        x.getString(16), // AccountRefDay
+        x.getString(17), // AccountRefMonth
+        x.getString(18), // AccountNextDueDate
+        x.getString(19), // AccountLastMadeUpDate
+        x.getString(20), // AccountCategory
+        // Returns
+        x.getString(21), // ReturnsNextDueDate
+        x.getString(22), // ReturnsLastMadeUpDate
+        // Sic
+        x.getString(27), // SICCodeSicText1
+        x.getString(28), // SICCodeSicText2
+        x.getString(29), // SICCodeSicText3
+        x.getString(30) // SICCodeSicText4
+      )
+    }).toList
+  }
+
+  @deprecated
+  def getCompanyFromDbOld(companyNumber: String): List[Company] = {
     val url: String = config.getString("url")
     val username: String = config.getString("username")
     val password: String = config.getString("password")
