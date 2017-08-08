@@ -1,0 +1,71 @@
+## Company House
+
+### Clean CSV Headers
+
+```csv
+CompanyName,CompanyNumber,RegAddressCareOf,RegAddressPOBox,RegAddressAddressLine1,RegAddressAddressLine2,RegAddressPostTown,RegAddressCounty,RegAddressCountry,RegAddressPostCode,CompanyCategory,CompanyStatus,CountryOfOrigin,DissolutionDate,IncorporationDate,AccountsAccountRefDay,AccountsAccountRefMonth,AccountsNextDueDate,AccountsLastMadeUpDate,AccountsAccountCategory,ReturnsNextDueDate,ReturnsLastMadeUpDate,MortgagesNumMortCharges,MortgagesNumMortOutstanding,MortgagesNumMortPartSatisfied,MortgagesNumMortSatisfied,SICCodeSicText1,SICCodeSicText2,SICCodeSicText3,SICCodeSicText4,LimitedPartnershipsNumGenPartners,LimitedPartnershipsNumLimPartners,URI,PreviousName1CONDATE,PreviousName1CompanyName,PreviousName2CONDATE,PreviousName2CompanyName,PreviousName3CONDATE,PreviousName3CompanyName,PreviousName4CONDATE,PreviousName4CompanyName,PreviousName5CONDATE,PreviousName5CompanyName,PreviousName6CONDATE,PreviousName6CompanyName,PreviousName7CONDATE,PreviousName7CompanyName,PreviousName8CONDATE,PreviousName8CompanyName,PreviousName9CONDATE,PreviousName9CompanyName,PreviousName10CONDATE,PreviousName10CompanyName,ConfStmtNextDueDate,ConfStmtLastMadeUpDate
+```
+
+### Hive Table Definition
+
+```SQL
+create table company_house
+(CompanyName string,
+CompanyNumber string,
+RegAddressCareOf string,
+RegAddressPOBox string,
+RegAddressAddressLine1 string,
+RegAddressAddressLine2 string,
+RegAddressPostTown string,
+RegAddressCounty string,
+RegAddressCountry string,
+RegAddressPostCode string,
+CompanyCategory string,
+CompanyStatus string,
+CountryOfOrigin string,
+DissolutionDate string,
+IncorporationDate string,
+AccountsAccountRefDay string,
+AccountsAccountRefMonth string,
+AccountsNextDueDate string,
+AccountsLastMadeUpDate string,
+AccountsAccountCategory string,
+ReturnsNextDueDate string,
+ReturnsLastMadeUpDate string,
+MortgagesNumMortCharges string,
+MortgagesNumMortOutstanding string,
+MortgagesNumMortPartSatisfied string,
+MortgagesNumMortSatisfied string,
+SICCodeSicText1 string,
+SICCodeSicText2 string,
+SICCodeSicText3 string,
+SICCodeSicText4 string,
+LimitedPartnershipsNumGenPartners string,
+LimitedPartnershipsNumLimPartners string,
+URI,PreviousName1CONDATE string,
+PreviousName1CompanyName string,
+PreviousName2CONDATE string,
+PreviousName2CompanyName string,
+PreviousName3CONDATE string,
+PreviousName3CompanyName string,
+PreviousName4CONDATE string,
+PreviousName4CompanyName string,
+PreviousName5CONDATE string,
+PreviousName5CompanyName string,
+PreviousName6CONDATE string,
+PreviousName6CompanyName string,
+PreviousName7CONDATE string,
+PreviousName7CompanyName string,
+PreviousName8CONDATE string,
+PreviousName8CompanyName string,
+PreviousName9CONDATE string,
+PreviousName9CompanyName string,
+PreviousName10CONDATE string,
+PreviousName10CompanyName string,
+ConfStmtNextDueDate string,
+ConfStmtLastMadeUpDate string)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+TBLPROPERTIES("skip.header.line.count"="1");
+```

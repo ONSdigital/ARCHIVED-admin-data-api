@@ -11,9 +11,8 @@ lazy val Versions = new {
   val util = "0.27.8"
 }
 
-
 lazy val Constant = new {
-  val appName = "ons-sbr-ch-api"
+  val appName = "sbr-admin-data-api"
   val detail = Versions.version
   val organisation = "ons"
   val team = "sbr"
@@ -57,7 +56,7 @@ lazy val api = (project in file("."))
   .settings(
     scalaVersion := Versions.scala,
     name := Constant.appName,
-    moduleName := "sbr-ch-data-api",
+    moduleName := "sbr-admin-data-api",
     version := Versions.version,
     buildInfoPackage := "controllers",
     buildInfoKeys := Seq[BuildInfoKey](
@@ -77,6 +76,7 @@ lazy val api = (project in file("."))
     buildInfoPackage := "controllers",
     libraryDependencies ++= Seq (
       filters,
+      jdbc,
       "org.webjars"                  %%    "webjars-play"        %    "2.5.0-3",
       "com.typesafe.scala-logging"   %%    "scala-logging"       %    "3.5.0",
       "com.outworkers"               %%    "util-parsers-cats"   %    Versions.util,
@@ -84,9 +84,12 @@ lazy val api = (project in file("."))
       "com.outworkers"               %%    "util-testing"        %    Versions.util     % Test,
       "org.scalatestplus.play"       %%    "scalatestplus-play"  %    "2.0.0"           % Test,
       "io.swagger"                   %%    "swagger-play2"       %    "1.5.3",
-      "org.webjars"                  %     "swagger-ui"          %    "2.2.10-1"
+      "org.webjars"                  %     "swagger-ui"          %    "2.2.10-1",
+      "org.apache.hive"              %     "hive-jdbc"           %    "1.2.1",
+      "org.apache.spark"             %     "spark-hive_2.11"     %    "2.1.0",
+      "mysql"                        %     "mysql-connector-java" % "5.1.35"
     ),
-    assemblyJarName in assembly := "sbr-ch-data-api.jar",
+    assemblyJarName in assembly := "sbr-admin-data-api.jar",
     assemblyMergeStrategy in assembly := {
       case PathList("META-INF", xs @ _*) => MergeStrategy.discard
       case x => MergeStrategy.first

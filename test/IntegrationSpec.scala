@@ -7,8 +7,8 @@ class IntegrationSpec extends TestUtils {
   "Get by company number" should {
 
     "return correct company" in {
-      val companyNumber = "19384720"
-      val res = fakeRequest(s"/v1/company?id=${companyNumber}")
+      val companyNumber = "08209948"
+      val res = fakeRequest(s"/v1/company/${companyNumber}")
       status(res) mustBe OK
       contentType(res) mustBe Some("application/json")
       val returnedCrn = getJsValueString(contentAsJson(res) \ "company_number")

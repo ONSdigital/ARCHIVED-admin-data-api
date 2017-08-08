@@ -1,11 +1,9 @@
-import java.io.File
-
 import com.google.inject.AbstractModule
 import java.time.Clock
 
 import com.typesafe.config.{ Config, ConfigFactory }
-import play.api.{ Configuration, Environment }
-import services.{ ApplicationTimer, AtomicCounter, Counter, LoadCsvData }
+import play.api.{ Configuration, Environment, Logger }
+import services._
 import config.SbrConfigManager
 
 /**
@@ -23,8 +21,8 @@ class Module(environment: Environment, configuration: Configuration) extends Abs
   override def configure() = {
     val config = SbrConfigManager.envConf(ConfigFactory.load())
     bind(classOf[Config]).toInstance(config)
-    // Bind the CSV data, make it accessible through @Inject()
-    bind(classOf[LoadCsvData]).asEagerSingleton()
+    // Bind the CHData service, make it accessible through @Inject()
+    bind(classOf[CHData]).asEagerSingleton()
     // Use the system clock as the default implementation of Clock
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone)
     // Ask Guice to create an instance of ApplicationTimer when the

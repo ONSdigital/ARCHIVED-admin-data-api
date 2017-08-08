@@ -3,7 +3,7 @@
 # ~~~~
 
 # Searching Feature
-GET     /v1/company                 controllers.v1.SearchController.getCompanyById(id: Option[String] ?= None)
+GET     /v1/company/:companyNumber  controllers.v1.SearchController.getCompanyById(companyNumber)
 GET     /                           controllers.HomeController.status
 
 # Route for deployed version information (in JSON).

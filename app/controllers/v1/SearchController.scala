@@ -8,14 +8,14 @@ import javax.inject.Inject
 
 import com.typesafe.config.Config
 import play.api.Logger
-import models.CompanyHouseObj
-import services.LoadCsvData
+import models.{ CompanyObj }
+import services.{ CHData }
 
 /**
  * Created by coolit on 18/07/2017.
  */
 @Api("Search")
-class SearchController @Inject() (loadCsvData: LoadCsvData, val config: Config) extends ControllerUtils {
+class SearchController @Inject() (chData: CHData, val config: Config) extends ControllerUtils {
 
   @ApiOperation(
     value = "JSON of the matching company",
@@ -30,13 +30,18 @@ class SearchController @Inject() (loadCsvData: LoadCsvData, val config: Config) 
     new ApiResponse(code = 404, responseContainer = "JSONObject", message = "Client Side Error -> Id not found."),
     new ApiResponse(code = 500, responseContainer = "JSONObject", message = "Server Side Error -> Request could not be completed.")
   ))
-  def getCompanyById(@ApiParam(value = "An identifier of any type", example = "87395710", required = true) id: Option[String]): Action[AnyContent] = {
+  def getCompanyById(@ApiParam(value = "An identifier of any type", example = "87395710", required = true) companyNumber: String): Action[AnyContent] = {
     Action.async { implicit request =>
-      Logger.info(s"Searching for company with id: ${id}")
-      val res = id match {
-        case Some(id) if id.length > 0 => loadCsvData.ch.filter(_.company_number == id) match {
-          case Nil => NotFound(errAsJson(404, "not found", s"Could not find value ${id}")).future
-          case x => Ok(CompanyHouseObj.toJson(x(0))).future
+      val src: String = config.getString("source")
+      Logger.info(s"Searching for company with id: ${companyNumber} in source: ${src}")
+      val res = companyNumber match {
+        case companyNumber if companyNumber.length > 0 => chData.getCompanyById(companyNumber) match {
+          case Nil => NotFound(errAsJson(404, "not found", s"Could not find value ${companyNumber}")).future
+          case _ :: _ :: Nil => InternalServerError(errAsJson(500, "internal server error", s"more than one result returned for companyNumber: $companyNumber")).future
+          case x => {
+            Logger.info(s"Returning company [${companyNumber}]: ${x.head}")
+            Ok(CompanyObj.toJson(x.head)).future
+          }
         }
         case _ => BadRequest(errAsJson(400, "missing parameter", "No query string found")).future
       }
