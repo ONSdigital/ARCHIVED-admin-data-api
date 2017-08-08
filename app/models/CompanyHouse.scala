@@ -78,30 +78,7 @@ object CompanyObj {
 
   def toJson(company: Company): JsValue = {
     Json.toJson(
-      Company(
-        company.CompanyName,
-        company.CompanyNumber,
-        company.CompanyCategory,
-        company.CompanyStatus,
-        company.CountryOfOrigin,
-        company.IncorporationDate,
-        company.AddressLine1,
-        company.AddressLine2,
-        company.PostTown,
-        company.County,
-        company.Postcode,
-        company.AccountRefDay,
-        company.AccountRefMonth,
-        company.AccountNextDueDate,
-        company.AccountLastMadeUpDate,
-        company.AccountCategory,
-        company.ReturnsNextDueDate,
-        company.ReturnsLastMadeUpDate,
-        company.SICCodeSicText1,
-        company.SICCodeSicText2,
-        company.SICCodeSicText3,
-        company.SICCodeSicText4
-      )
+      company
     )
   }
 }

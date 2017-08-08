@@ -8,18 +8,19 @@ import play.api.Logger
 import models.Company
 import utils.RsIterator
 
+import com.typesafe.config.Config
+import javax.inject.Inject
+
 /**
  * Created by coolit on 07/08/2017.
  * When the application starts, this will be accessible in the controllers through the use of @Inject()
  */
 @Singleton
-class CHData {
-  val chCsvPath = "conf/sample/company_house_data.csv"
-  val ch = readChCSV(chCsvPath)
-  val src = sys.props.get("source").getOrElse("csv")
+class CHData @Inject() (implicit val config: Config) {
+  val src = config.getString("source")
+  val ch = if (src == "csv") readChCSV(config.getString("filename")) else List()
 
   def getCompanyById(companyNumber: String): List[Company] = {
-    Logger.info(s"Searching for company in source: $src")
     src match {
       case "csv" => ch.filter(_.CompanyNumber == s""""$companyNumber"""")
       case "hiveLocal" => getCompanyFromDb(companyNumber)
@@ -39,14 +40,15 @@ class CHData {
   }
 
   def getCompanyFromDb(companyNumber: String): List[Company] = {
-    val url: String = "jdbc:hive2://localhost:10000/default"
-    val driver: String = "org.apache.hive.jdbc.HiveDriver"
-    val username: String = "raj_ops"
-    val password: String = "password"
+    val url: String = config.getString("url")
+    val username: String = config.getString("username")
+    val password: String = config.getString("password")
     val query: String = s"""SELECT * FROM ch WHERE companynumber = '"$companyNumber"' LIMIT 1"""
 
+    Logger.trace(s"Running query [${query}] on url [${url}] with username: ${username}")
+
     try {
-      Class.forName(driver)
+      Class.forName("org.apache.hive.jdbc.HiveDriver")
       val connection: Connection = DriverManager.getConnection(url, username, password)
       val statement: Statement = connection.createStatement
       val rs: ResultSet = statement.executeQuery(query)
@@ -84,7 +86,7 @@ class CHData {
       listOfCompanies
     } catch {
       case e: Exception => {
-        Logger.info(e.toString)
+        Logger.info(s"Database exception: ${e.toString}")
         List()
       }
     }

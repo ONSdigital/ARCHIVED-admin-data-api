@@ -32,7 +32,8 @@ class SearchController @Inject() (chData: CHData, val config: Config) extends Co
   ))
   def getCompanyById(@ApiParam(value = "An identifier of any type", example = "87395710", required = true) companyNumber: String): Action[AnyContent] = {
     Action.async { implicit request =>
-      Logger.info(s"Searching for company with id: ${companyNumber}")
+      val src: String = config.getString("source")
+      Logger.info(s"Searching for company with id: ${companyNumber} in source: ${src}")
       val res = companyNumber match {
         case companyNumber if companyNumber.length > 0 => chData.getCompanyById(companyNumber) match {
           case Nil => NotFound(errAsJson(404, "not found", s"Could not find value ${companyNumber}")).future

@@ -8,10 +8,10 @@ import play.api.Logger
  */
 object SbrConfigManager {
   def envConf(conf: Config): Config = {
-    // Get the environment variable 'environment' that we pass in
-    val env = sys.props.get("environment").getOrElse("default")
-    Logger.info(s"Load config for [$env] env")
-    val envConf = conf.getConfig(s"env.$env")
+    // Get the environment variable 'source' that we pass in
+    val src = sys.props.get("source").getOrElse("csv")
+    Logger.info(s"Load config for [$src] src")
+    val envConf = conf.getConfig(s"src.$src")
     Logger.debug(envConf.toString)
     envConf
   }

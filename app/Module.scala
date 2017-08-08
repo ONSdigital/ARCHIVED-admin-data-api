@@ -2,7 +2,7 @@ import com.google.inject.AbstractModule
 import java.time.Clock
 
 import com.typesafe.config.{ Config, ConfigFactory }
-import play.api.{ Configuration, Environment }
+import play.api.{ Configuration, Environment, Logger }
 import services._
 import config.SbrConfigManager
 

@@ -42,7 +42,7 @@ Once the VM is running, you should be able to go to `localhost:8888` to see the 
 SELECT * FROM company_house;
 ```
 
-6. Create a table using the Parquet data format (this speeds things up quite a bit):
+6. Create a table using the Parquet data format (this will speed up many queries):
 
 ```SQL
 set hive.execution.engine=mr;
