@@ -1,6 +1,5 @@
 *.class
 *.log
-*.dat
 
 /metastore_db
 
