@@ -26,11 +26,11 @@ class CHData @Inject() (implicit val config: Config) {
   val src = config.getString("source")
   val ch = if (src == "csv") readChCSV(config.getString("filename")) else List()
 
-  def getCompanyById(companyNumber: String): List[Company] = {
+  def getCompanyById(companyNumber: String): Try[List[Company]] = {
     src match {
-      case "csv" => ch.filter(_.CompanyNumber == s""""$companyNumber"""")
-      case "hiveLocal" => getCompanyFromDb(companyNumber)
-      case "hbaseLocal" => getCompanyFromHbase(companyNumber)
+      case "csv" => Try(ch.filter(_.CompanyNumber == s""""$companyNumber""""))
+      case "hiveLocal" => Try(getCompanyFromDb(companyNumber))
+      case "hbaseLocal" => Try(getCompanyFromHbase(companyNumber))
     }
   }
 
@@ -56,6 +56,7 @@ class CHData @Inject() (implicit val config: Config) {
     val listOfCaseClasses: List[Company] = listOfLists.map(
       c => Company(c(0), c(1), c(10), c(11), c(12), c(14), c(4), c(5), c(6), c(7), c(8), c(15), c(16), c(17), c(18), c(19), c(20), c(21), c(26), c(27), c(28), c(29))
     )
+    Logger.info(s"Loaded in ${listOfCaseClasses.length} companies from CSV file")
     listOfCaseClasses
   }
 
@@ -66,13 +67,16 @@ class CHData @Inject() (implicit val config: Config) {
     Class.forName("org.apache.hive.jdbc.HiveDriver")
     Logger.trace(s"Creating JDBC connection with url [${url}]")
     Try(DriverManager.getConnection(url, username, password)).recoverWith {
-      case e: Exception => Failure(new Exception("Unable to create JDBC connection"))
+      case e: Exception => Failure(new Exception("Unable to create JDBC connection to Hive"))
     }
   }
 
   def getCompanyFromDb(companyNumber: String): List[Company] = {
     getDbConnection() match {
-      case Failure(thrown) => throw new Exception(s"Unable to get company ${companyNumber} from database")
+      case Failure(thrown) => {
+        Logger.error(s"${thrown.getMessage}")
+        throw new Exception(s"${thrown.getMessage}")
+      }
       case Success(con) => {
         val cols = List(
           "CompanyName", "CompanyNumber", "CompanyCategory", "CompanyStatus", "CountryOfOrigin", "IncorporationDate",

@@ -80,6 +80,8 @@ object CompanyObj {
     }
   }
 
+  def companyNumberValidator(cn: String): Boolean = cn.matches("[A-Z]{2}\\d{6}") || cn.matches("[0-9]{8}")
+
   def toJson(company: Company): JsValue = {
     Json.toJson(
       company
