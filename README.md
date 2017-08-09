@@ -18,15 +18,33 @@ An API for use by sbr-api for accessing Company House data
 brew install sbt
 ```
 
-* VirtualBox (https://www.virtualbox.org/wiki/Downloads
+## Running
 
-### Hortonworks Sandbox VM Setup
+With the minimal environment setup described above (just Java 8 and SBT), the sbr-admin-data-api will only work with csv file, not Hbase or Hive. Further instructions for Hbase/Hive installation can be found below.
+
+To run the `sbr-ch-data-api`, run the following:
+
+``` shell
+sbt api/run -Dsource=csv
+```
+
+Swap the `csv` argument with any of the values in the table below:
+
+| -Dsource value | Data Access                                                                                     |
+|----------------|-------------------------------------------------------------------------------------------------|
+| csv            | Local [CSV file](./conf/sample/company_house_data.csv) (first 10,000 rows of CompanyHouse data) |
+| hiveLocal      | Hive which runs inside the Hortonworks VM (setup described above)                               |
+| hbaseLocal     | A local hbase installation (not in a VM)                                                        |
+| hiveCloudera   | Hive which runs on Cloudera (requires Kerboros setup etc.)                                      |
+
+## Hortonworks Sandbox VM Setup
 
 To reduce complications with the install/setup of Hive/Hadoop etc, we will be using the Hortonworks Sandbox VM.
 
-1. Download the VM (https://hortonworks.com/downloads/#sandbox)
-2. Import the VM into VirtualBox, use default settings, but use at least 8GB of RAM, preferably 10GB.
-3. Run the VM
+1. Install VirtualBox (https://www.virtualbox.org/wiki/Downloads)
+2. Download the VM (https://hortonworks.com/downloads/#sandbox)
+3. Import the VM into VirtualBox, use default settings, but use at least 8GB of RAM, preferably 10GB.
+4. Run the VM
 
 Once the VM is running, you should be able to go to `localhost:8888` to see the dashboard.
 
@@ -49,23 +67,9 @@ set hive.execution.engine=mr;
 CREATE TABLE ch STORED AS PARQUET AS SELECT * FROM company_house;
 ```
 
-This will take some time.
+Creating the Parquet table may take some time.
 
-## Running
-
-To run the `sbr-ch-data-api`, run the following:
-
-``` shell
-sbt api/run -Dsource=csv
-```
-
-Swap `source` with any of the values in the table below:
-
-| -Dsource value | Data Access                                                                                     |
-|----------------|-------------------------------------------------------------------------------------------------|
-| csv            | Local [CSV file](./conf/sample/company_house_data.csv) (first 10,000 rows of CompanyHouse data) |
-| hiveLocal      | Hive which runs inside the Hortonworks VM (setup described above)                               |
-| hiveCloudera   | Hive which runs on Cloudera (requires Kerboros setup etc.)                                      |
+## Hbase Setup
 
 ## Assembly
 
