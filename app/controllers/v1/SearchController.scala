@@ -43,7 +43,7 @@ class SearchController @Inject() (chData: CHData, val config: Config) extends Co
             Ok(CompanyObj.toJson(x.head)).future
           }
         }
-        case _ => BadRequest(errAsJson(400, "missing parameter", "No query string found")).future
+        case _ => BadRequest(errAsJson(400, "missing parameter", "No value for companyNumber found")).future
       }
       res
     }

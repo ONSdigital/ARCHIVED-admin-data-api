@@ -87,7 +87,10 @@ lazy val api = (project in file("."))
       "org.webjars"                  %     "swagger-ui"          %    "2.2.10-1",
       "org.apache.hive"              %     "hive-jdbc"           %    "1.2.1",
       "org.apache.spark"             %     "spark-hive_2.11"     %    "2.1.0",
-      "mysql"                        %     "mysql-connector-java" % "5.1.35"
+      "mysql"                        %     "mysql-connector-java" %   "5.1.35",
+      "org.apache.hbase"             %     "hbase-client"        %    "1.3.1",
+      "org.apache.hbase"             %     "hbase-common"        %    "1.3.1",
+      "org.slf4j"                    %     "slf4j-api"           %    "1.7.25"
     ),
     assemblyJarName in assembly := "sbr-admin-data-api.jar",
     assemblyMergeStrategy in assembly := {

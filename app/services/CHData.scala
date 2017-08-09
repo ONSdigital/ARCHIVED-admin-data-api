@@ -1,6 +1,8 @@
 package services
 
 import java.sql.{ Connection, DriverManager, ResultSet, Statement }
+import java.util
+import java.util.Optional
 import javax.inject.Singleton
 
 import scala.io.Source
@@ -10,7 +12,11 @@ import utils.RsIterator
 import com.typesafe.config.Config
 import javax.inject.Inject
 
-import scala.util.{ Failure, Try, Success }
+import uk.gov.ons.sbr.data.controller.AdminDataController
+import uk.gov.ons.sbr.data.hbase.HBaseConnector
+import uk.gov.ons.sbr.data.domain.{ CompanyRegistration }
+
+import scala.util.{ Failure, Success, Try }
 
 /**
  * Created by coolit on 07/08/2017.
@@ -25,7 +31,54 @@ class CHData @Inject() (implicit val config: Config) {
     src match {
       case "csv" => ch.filter(_.CompanyNumber == s""""$companyNumber"""")
       case "hiveLocal" => getCompanyFromDb(companyNumber)
+      case "hbaseLocal" => getCompanyFromHbase(companyNumber)
     }
+  }
+
+  def optionConverter(o: Optional[CompanyRegistration]): Option[CompanyRegistration] =
+    if (o.isPresent) Some(o.get) else None
+
+  def getCompanyFromHbase(companyNumber: String): List[Company] = {
+    HBaseConnector.getInstance().connect()
+    val adminController = new AdminDataController()
+    val c = adminController.getCompanyRegistration(companyNumber)
+    optionConverter(c) match {
+      case Some(c) => mapToCompayList(c.getVariables)
+      case None => List()
+    }
+  }
+
+  def mapToCompayList(company: util.Map[String, String]): List[Company] = {
+    List(
+      Company(
+        company.get("companyname"), // CompanyName
+        company.get("companynumber"), // CompanyNumber
+        company.get("companycategory"), // CompanyCategory
+        company.get("companystatus"), // CompanyStatus
+        company.get("countryoforigin"), // CountryOfOrigin
+        company.get("incorporationdate"), // IncorporationDate
+        // Address
+        company.get("regaddress_addressline1"), // AddressLine1
+        company.get("regaddress_addressline2"), // AddressLine2
+        company.get("regaddress_posttown"), // PostTown
+        company.get("regaddress_county"), // County
+        company.get("regaddress_postcode"), // Postcode
+        // Accounts
+        company.get("accounts_accountrefday"), // AccountRefDay
+        company.get("accounts_accountrefmonth"), // AccountRefMonth
+        company.get("accounts_nextduedate"), // AccountNextDueDate
+        company.get("accounts_lastmadeupdate"), // AccountLastMadeUpDate
+        company.get("accounts_accountcategory"), // AccountCategory
+        // Returns
+        company.get("returns_nextduedate"), // ReturnsNextDueDate
+        company.get("returns_lastmadeupdate"), // ReturnsLastMadeUpDate
+        // Sic
+        company.get("siccode_sictext_1"), // SICCodeSicText1
+        company.get("siccode_sictext_2"), // SICCodeSicText2
+        company.get("siccode_sictext_3"), // SICCodeSicText3
+        company.get("siccode_sictext_4") // SICCodeSicText4
+      )
+    )
   }
 
   def readChCSV(fileName: String): List[Company] = {
