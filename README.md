@@ -69,7 +69,56 @@ CREATE TABLE ch STORED AS PARQUET AS SELECT * FROM company_house;
 
 Creating the Parquet table may take some time.
 
-## Hbase Setup
+## HBase Setup
+
+To install HBase, run the following command:
+
+```shell
+brew install hbase
+```
+
+Use the following commands to start/stop HBase:
+
+```shell
+start-hbase.sh
+stop-hbase.sh
+```
+
+### Inserting CompanyHouse data into HBase
+
+Firstly, start HBase and open the shell, then create the namespace/table for the CompanyHouse data.
+
+```shell
+start-hbase.sh
+hbase shell
+create_namespace 'sbr_local_db'
+create 'sbr_local_db:ch', 'd'
+```
+
+Create some folders for use by the [sbr-hbase-connector](https://github.com/ONSdigital/sbr-hbase-connector) and change its permissions:
+
+```shell
+cd /
+sudo mkdir -p user/<username>/hbase-staging
+chmod 777 user/<username>/hbase-staging
+```
+
+Download the CompanyHouse data from [here](http://download.companieshouse.gov.uk/en_output.html)
+
+In the same directory as the CompanyHouse CSV file and the `sbr-hbase-connector` fat .jar, run the following command:
+
+```shell
+java -DREFERENCE_PERIOD="201706" -cp sbr-hbase-connector-1.0-SNAPSHOT-distribution.jar uk.gov.ons.sbr.data.hbase.load.BulkLoader ./path/to/CompanyHouseCsv.csv ch_2017-07-01.hfile CH
+```
+
+This will take ~10 minutes, a few errors will appear relating to invalid characters.
+
+Test it works:
+
+```shell
+hbase shell
+get 'sbr_local_db:ch', '201706~08209948'
+```
 
 ## Assembly
 
