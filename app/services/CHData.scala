@@ -1,13 +1,12 @@
 package services
 
 import java.sql.{ Connection, DriverManager, ResultSet, Statement }
-import java.util
 import java.util.Optional
 import javax.inject.Singleton
 
 import scala.io.Source
 import play.api.Logger
-import models.Company
+import models.{ Company, CompanyObj }
 import utils.RsIterator
 import com.typesafe.config.Config
 import javax.inject.Inject
@@ -43,42 +42,9 @@ class CHData @Inject() (implicit val config: Config) {
     val adminController = new AdminDataController()
     val c = adminController.getCompanyRegistration(companyNumber)
     optionConverter(c) match {
-      case Some(c) => mapToCompayList(c.getVariables)
+      case Some(c) => CompanyObj.mapToCompayList(c.getVariables)
       case None => List()
     }
-  }
-
-  def mapToCompayList(company: util.Map[String, String]): List[Company] = {
-    List(
-      Company(
-        company.get("companyname"), // CompanyName
-        company.get("companynumber"), // CompanyNumber
-        company.get("companycategory"), // CompanyCategory
-        company.get("companystatus"), // CompanyStatus
-        company.get("countryoforigin"), // CountryOfOrigin
-        company.get("incorporationdate"), // IncorporationDate
-        // Address
-        company.get("regaddress_addressline1"), // AddressLine1
-        company.get("regaddress_addressline2"), // AddressLine2
-        company.get("regaddress_posttown"), // PostTown
-        company.get("regaddress_county"), // County
-        company.get("regaddress_postcode"), // Postcode
-        // Accounts
-        company.get("accounts_accountrefday"), // AccountRefDay
-        company.get("accounts_accountrefmonth"), // AccountRefMonth
-        company.get("accounts_nextduedate"), // AccountNextDueDate
-        company.get("accounts_lastmadeupdate"), // AccountLastMadeUpDate
-        company.get("accounts_accountcategory"), // AccountCategory
-        // Returns
-        company.get("returns_nextduedate"), // ReturnsNextDueDate
-        company.get("returns_lastmadeupdate"), // ReturnsLastMadeUpDate
-        // Sic
-        company.get("siccode_sictext_1"), // SICCodeSicText1
-        company.get("siccode_sictext_2"), // SICCodeSicText2
-        company.get("siccode_sictext_3"), // SICCodeSicText3
-        company.get("siccode_sictext_4") // SICCodeSicText4
-      )
-    )
   }
 
   def readChCSV(fileName: String): List[Company] = {
@@ -119,96 +85,9 @@ class CHData @Inject() (implicit val config: Config) {
         Logger.trace(s"Running query [${query}] on Hive database")
         val statement: Statement = con.createStatement
         val rs: ResultSet = statement.executeQuery(query)
-        val listOfCompanys = rsToCompany(rs)
+        val listOfCompanys = CompanyObj.rsToCompanyList(rs)
         con.close
         listOfCompanys
-      }
-    }
-  }
-
-  def rsToCompany(rs: ResultSet): List[Company] = {
-    new RsIterator(rs).map(x => {
-      Company(
-        x.getString(1), // CompanyName
-        x.getString(2), // CompanyNumber
-        x.getString(3), // CompanyCategory
-        x.getString(4), // CompanyStatus
-        x.getString(5), // CountryOfOrigin
-        x.getString(6), // IncorporationDate
-        // Address
-        x.getString(7), // AddressLine1
-        x.getString(8), // AddressLine2
-        x.getString(9), // PostTown
-        x.getString(10), // County
-        x.getString(11), // Postcode
-        // Accounts
-        x.getString(12), // AccountRefDay
-        x.getString(13), // AccountRefMonth
-        x.getString(14), // AccountNextDueDate
-        x.getString(15), // AccountLastMadeUpDate
-        x.getString(16), // AccountCategory
-        // Returns
-        x.getString(17), // ReturnsNextDueDate
-        x.getString(18), // ReturnsLastMadeUpDate
-        // Sic
-        x.getString(19), // SICCodeSicText1
-        x.getString(20), // SICCodeSicText2
-        x.getString(21), // SICCodeSicText3
-        x.getString(22) // SICCodeSicText4
-      )
-    }).toList
-  }
-
-  @deprecated
-  def getCompanyFromDbOld(companyNumber: String): List[Company] = {
-    val url: String = config.getString("url")
-    val username: String = config.getString("username")
-    val password: String = config.getString("password")
-    val query: String = s"""SELECT * FROM ch WHERE companynumber = '"$companyNumber"' LIMIT 1"""
-
-    Logger.trace(s"Running query [${query}] on url [${url}] with username: ${username}")
-
-    try {
-      Class.forName("org.apache.hive.jdbc.HiveDriver")
-      val connection: Connection = DriverManager.getConnection(url, username, password)
-      val statement: Statement = connection.createStatement
-      val rs: ResultSet = statement.executeQuery(query)
-      val listOfCompanies: List[Company] = new RsIterator(rs).map(x => {
-        Company(
-          x.getString(1), // CompanyName
-          x.getString(2), // CompanyNumber
-          x.getString(11), // CompanyCategory
-          x.getString(12), // CompanyStatus
-          x.getString(13), // CountryOfOrigin
-          x.getString(15), // IncorporationDate
-          // Address
-          x.getString(5), // AddressLine1
-          x.getString(6), // AddressLine2
-          x.getString(7), // PostTown
-          x.getString(8), // County
-          x.getString(9), // Postcode
-          // Accounts
-          x.getString(16), // AccountRefDay
-          x.getString(17), // AccountRefMonth
-          x.getString(18), // AccountNextDueDate
-          x.getString(19), // AccountLastMadeUpDate
-          x.getString(20), // AccountCategory
-          // Returns
-          x.getString(21), // ReturnsNextDueDate
-          x.getString(22), // ReturnsLastMadeUpDate
-          // Sic
-          x.getString(27), // SICCodeSicText1
-          x.getString(28), // SICCodeSicText2
-          x.getString(29), // SICCodeSicText3
-          x.getString(30) // SICCodeSicText4
-        )
-      }).toList
-      connection.close
-      listOfCompanies
-    } catch {
-      case e: Exception => {
-        Logger.info(s"Database exception: ${e.toString}")
-        List()
       }
     }
   }

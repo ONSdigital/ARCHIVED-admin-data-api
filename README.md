@@ -86,7 +86,7 @@ stop-hbase.sh
 
 ### Inserting CompanyHouse data into HBase
 
-Firstly, start HBase and open the shell, then create the namespace/table for the CompanyHouse data.
+Firstly, start HBase and open the shell, then create the namespace/table for the CompanyHouse data:
 
 ```shell
 start-hbase.sh
@@ -103,7 +103,7 @@ sudo mkdir -p user/<username>/hbase-staging
 chmod 777 user/<username>/hbase-staging
 ```
 
-Download the CompanyHouse data from [here](http://download.companieshouse.gov.uk/en_output.html)
+Download the CompanyHouse data from [here](http://download.companieshouse.gov.uk/en_output.html).
 
 In the same directory as the CompanyHouse CSV file and the `sbr-hbase-connector` fat .jar, run the following command:
 
