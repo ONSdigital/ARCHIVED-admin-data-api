@@ -6,14 +6,13 @@ import javax.inject.Singleton
 
 import scala.io.Source
 import play.api.Logger
-import models.{ Company, CompanyObj }
-import utils.RsIterator
+import models.{ Company, CompanyObj, MyAbstract, Unit, UnitObj }
 import com.typesafe.config.Config
 import javax.inject.Inject
 
 import uk.gov.ons.sbr.data.controller.AdminDataController
 import uk.gov.ons.sbr.data.hbase.HBaseConnector
-import uk.gov.ons.sbr.data.domain.{ CompanyRegistration }
+import uk.gov.ons.sbr.data.domain.CompanyRegistration
 
 import scala.util.{ Failure, Success, Try }
 
@@ -26,7 +25,7 @@ class CHData @Inject() (implicit val config: Config) {
   val src = config.getString("source")
   val ch = if (src == "csv") readChCSV(config.getString("filename")) else List()
 
-  def getCompanyById(companyNumber: String): Try[List[Company]] = {
+  def getCompanyById(companyNumber: String): Try[List[MyAbstract]] = {
     src match {
       case "csv" => Try(ch.filter(_.CompanyNumber == s""""$companyNumber""""))
       case "hiveLocal" => Try(getCompanyFromDb(companyNumber))
@@ -37,12 +36,12 @@ class CHData @Inject() (implicit val config: Config) {
   def optionConverter(o: Optional[CompanyRegistration]): Option[CompanyRegistration] =
     if (o.isPresent) Some(o.get) else None
 
-  def getCompanyFromHbase(companyNumber: String): List[Company] = {
+  def getCompanyFromHbase(companyNumber: String): List[Unit] = {
     HBaseConnector.getInstance().connect()
     val adminController = new AdminDataController()
     val c = adminController.getCompanyRegistration(companyNumber)
     optionConverter(c) match {
-      case Some(c) => CompanyObj.mapToCompayList(c.getVariables)
+      case Some(c) => UnitObj.mapToUnitList(c)
       case None => List()
     }
   }

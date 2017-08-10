@@ -100,7 +100,7 @@ Create some folders for use by the [sbr-hbase-connector](https://github.com/ONSd
 ```shell
 cd /
 sudo mkdir -p user/<username>/hbase-staging
-chmod 777 user/<username>/hbase-staging
+sudo chmod 777 user/<username>/hbase-staging
 ```
 
 Download the CompanyHouse data from [here](http://download.companieshouse.gov.uk/en_output.html).

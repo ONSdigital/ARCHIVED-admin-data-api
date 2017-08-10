@@ -38,8 +38,9 @@ case class Company(
   SICCodeSicText1: String,
   SICCodeSicText2: String,
   SICCodeSicText3: String,
-  SICCodeSicText4: String
-)
+  SICCodeSicText4: String,
+  classType: String = "company"
+) extends models.MyAbstract
 
 object CompanyObj {
   implicit val writer = new Writes[Company] {
@@ -82,11 +83,7 @@ object CompanyObj {
 
   def companyNumberValidator(cn: String): Boolean = cn.matches("[A-Z]{2}\\d{6}") || cn.matches("[0-9]{8}")
 
-  def toJson(company: Company): JsValue = {
-    Json.toJson(
-      company
-    )
-  }
+  def toJson(company: Company): JsValue = Json.toJson(company)
 
   def mapToCompayList(company: util.Map[String, String]): List[Company] = {
     List(
