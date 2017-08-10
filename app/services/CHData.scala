@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 import scala.io.Source
 import play.api.Logger
-import models.{ Company, MyAbstract, Unit }
+import models.{ Company, SearchKeys, Unit }
 import com.typesafe.config.Config
 import javax.inject.Inject
 
@@ -25,7 +25,7 @@ class CHData @Inject() (implicit val config: Config) {
   val src = config.getString("source")
   val ch = if (src == "csv") readChCSV(config.getString("filename")) else List()
 
-  def getCompanyById(companyNumber: String): Try[List[MyAbstract]] = {
+  def getCompanyById(companyNumber: String): Try[List[SearchKeys]] = {
     src match {
       case "csv" => Try(ch.filter(_.CompanyNumber == s""""$companyNumber""""))
       case "hiveLocal" => Try(getCompanyFromDb(companyNumber))

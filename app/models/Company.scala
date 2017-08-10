@@ -32,7 +32,7 @@ case class Company(
   SICCodeSicText3: String,
   SICCodeSicText4: String,
   classType: String = "company"
-) extends MyAbstract
+) extends SearchKeys
 
 object Company {
   implicit val writer = new Writes[Company] {

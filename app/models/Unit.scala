@@ -15,7 +15,7 @@ case class Unit(
   unitType: String,
   vars: util.Map[String, String],
   classType: String = "unit"
-) extends models.MyAbstract
+) extends SearchKeys
 
 object Unit {
   implicit val writer = new Writes[Unit] {
