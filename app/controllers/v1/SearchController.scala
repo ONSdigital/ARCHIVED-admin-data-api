@@ -3,7 +3,7 @@ package controllers.v1
 import io.swagger.annotations._
 import play.api.mvc.{ Action, AnyContent }
 import utils.Utilities._
-import com.outworkers.util.play._
+
 import javax.inject.Inject
 
 import com.typesafe.config.Config
@@ -37,13 +37,13 @@ class SearchController @Inject() (chData: CHData, val config: Config) extends Co
       val src: String = config.getString("source")
       Logger.info(s"Searching for company with id: ${companyNumber} in source: ${src}")
       val res = companyNumber match {
-        case companyNumber if CompanyObj.companyNumberValidator(companyNumber) => chData.getCompanyById(companyNumber) match {
+        case companyNumber if checkRegex(companyNumber, "[A-Z]{2}\\d{6}", "[0-9]{8}") => chData.getCompanyById(companyNumber) match {
           case Success(results) => results match {
             case Nil => NotFound(errAsJson(404, "Not Found", s"Could not find value ${companyNumber}")).future
             case _ :: _ :: Nil => InternalServerError(errAsJson(500, "internal server error", s"more than one result returned for companyNumber: $companyNumber")).future
             case x => x.head match {
-              case (x: Company) => Ok(CompanyObj.toJson(x)).future
-              case (y: Unit) => Ok(UnitObj.toJson(y)).future
+              case (x: Company) => Ok(Company.toJson(x)).future
+              case (y: Unit) => Ok(Unit.toJson(y)).future
             }
           }
           case Failure(e) => InternalServerError(errAsJson(500, "Internal Server Error", s"An error has occurred, please contact the server administrator")).future

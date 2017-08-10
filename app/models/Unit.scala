@@ -17,7 +17,7 @@ case class Unit(
   classType: String = "unit"
 ) extends models.MyAbstract
 
-object UnitObj {
+object Unit {
   implicit val writer = new Writes[Unit] {
     def writes(u: Unit): JsValue = {
       val sicText = List(u.vars.get("siccode_sictext_1"), u.vars.get("siccode_sictext_2"), u.vars.get("siccode_sictext_3"), u.vars.get("siccode_sictext_4")).filter(

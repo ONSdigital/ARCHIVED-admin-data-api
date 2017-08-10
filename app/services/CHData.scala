@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 import scala.io.Source
 import play.api.Logger
-import models.{ Company, CompanyObj, MyAbstract, Unit, UnitObj }
+import models.{ Company, MyAbstract, Unit }
 import com.typesafe.config.Config
 import javax.inject.Inject
 
@@ -41,7 +41,7 @@ class CHData @Inject() (implicit val config: Config) {
     val adminController = new AdminDataController()
     val c = adminController.getCompanyRegistration(companyNumber)
     optionConverter(c) match {
-      case Some(c) => UnitObj.mapToUnitList(c)
+      case Some(c) => Unit.mapToUnitList(c)
       case None => List()
     }
   }
@@ -88,7 +88,7 @@ class CHData @Inject() (implicit val config: Config) {
         Logger.trace(s"Running query [${query}] on Hive database")
         val statement: Statement = con.createStatement
         val rs: ResultSet = statement.executeQuery(query)
-        val listOfCompanys = CompanyObj.rsToCompanyList(rs)
+        val listOfCompanys = Company.rsToCompanyList(rs)
         con.close
         listOfCompanys
       }

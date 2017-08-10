@@ -3,6 +3,9 @@ package utils
 import java.io.File
 
 import play.api.libs.json._
+import play.api.mvc.Result
+
+import scala.concurrent.Future
 
 /**
  * Created by coolit on 18/07/2017.
@@ -27,5 +30,27 @@ object Utilities {
       case None => ""
     }
     res
+  }
+
+  /**
+   * Run regex on a string to check for validity
+   *
+   *  @param toCheck String to check
+   *  @param conditions Any number of regex strings
+   *  @return boolean
+   */
+  def checkRegex(toCheck: String, conditions: String*): Boolean =
+    conditions
+      .toList
+      .map(x => toCheck.matches(x))
+      .foldLeft(true)(_ || _)
+
+  /**
+   * Make results futures, Ok("").future not just Ok("")
+   */
+  implicit class ResultAugmenter(val res: Result) {
+    def future: Future[Result] = {
+      Future.successful(res)
+    }
   }
 }

@@ -44,8 +44,7 @@ lazy val commonSettings = Seq (
     "-Ywarn-numeric-widen" // Warn when numerics are widened
   ),
   resolvers ++= Seq(
-    Resolver.typesafeRepo("releases"),
-    Resolver.bintrayRepo("outworkers", "oss-releases")
+    Resolver.typesafeRepo("releases")
   ),
   coverageExcludedPackages := ".*Routes.*;.*ReverseRoutes.*;.*javascript.*"
 )
@@ -79,9 +78,6 @@ lazy val api = (project in file("."))
       jdbc,
       "org.webjars"                  %%    "webjars-play"        %    "2.5.0-3",
       "com.typesafe.scala-logging"   %%    "scala-logging"       %    "3.5.0",
-      "com.outworkers"               %%    "util-parsers-cats"   %    Versions.util,
-      "com.outworkers"               %%    "util-play"           %    Versions.util,
-      "com.outworkers"               %%    "util-testing"        %    Versions.util     % Test,
       "org.scalatestplus.play"       %%    "scalatestplus-play"  %    "2.0.0"           % Test,
       "io.swagger"                   %%    "swagger-play2"       %    "1.5.3",
       "org.webjars"                  %     "swagger-ui"          %    "2.2.10-1",
