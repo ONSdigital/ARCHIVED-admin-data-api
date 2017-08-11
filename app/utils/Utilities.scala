@@ -54,7 +54,7 @@ object Utilities {
   }
 
   def readCsv(fileName: String): List[List[String]] = {
-    Source.fromFile(fileName).getLines.toList.map(
+    Source.fromFile(fileName).getLines.drop(1).toList.map(
       _.split(",").toList
     )
   }

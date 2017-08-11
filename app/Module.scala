@@ -21,10 +21,7 @@ class Module(environment: Environment, configuration: Configuration) extends Abs
   override def configure() = {
     val config = SbrConfigManager.envConf(ConfigFactory.load())
     bind(classOf[Config]).toInstance(config)
-    // Bind the CHData service, make it accessible through @Inject()
-    bind(classOf[CHData]).asEagerSingleton()
     // Use the system clock as the default implementation of Clock
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone)
   }
-
 }
