@@ -129,3 +129,28 @@ object CompanyConstants {
   val sicCodeSicText3 = 21
   val sicCodeSicText4 = 22
 }
+
+object CompanyConstantsCSV {
+  val companyName = 0
+  val companyNumber = 1
+  val companyCategory = 10
+  val companyStatus = 11
+  val countryOfOrigin = 12
+  val incorporationDate = 14
+  val addressLine1 = 4
+  val addressLine2 = 5
+  val postTown = 6
+  val county = 7
+  val postcode = 8
+  val accountRefDay = 15
+  val accountRefMonth = 16
+  val accountNextDueDate = 17
+  val accountLastMadeUpDate = 18
+  val accountCategory = 19
+  val returnsNextDueDate = 20
+  val returnsLastMadeUpDate = 21
+  val sicCodeSicText1 = 26
+  val sicCodeSicText2 = 27
+  val sicCodeSicText3 = 28
+  val sicCodeSicText4 = 29
+}

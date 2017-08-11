@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 import scala.io.Source
 import play.api.Logger
-import models.{ Company, SearchKeys, Unit }
+import models.{ Company, CompanyConstantsCSV, SearchKeys, Unit }
 import com.typesafe.config.Config
 import javax.inject.Inject
 
@@ -53,7 +53,30 @@ class CHData @Inject() (implicit val config: Config) {
       _.split(",").toList
     )
     val listOfCaseClasses: List[Company] = listOfLists.map(
-      c => Company(c(0), c(1), c(10), c(11), c(12), c(14), c(4), c(5), c(6), c(7), c(8), c(15), c(16), c(17), c(18), c(19), c(20), c(21), c(26), c(27), c(28), c(29))
+      c => Company(
+        c(CompanyConstantsCSV.companyName),
+        c(CompanyConstantsCSV.companyNumber),
+        c(CompanyConstantsCSV.companyCategory),
+        c(CompanyConstantsCSV.companyStatus),
+        c(CompanyConstantsCSV.countryOfOrigin),
+        c(CompanyConstantsCSV.incorporationDate),
+        c(CompanyConstantsCSV.addressLine1),
+        c(CompanyConstantsCSV.addressLine2),
+        c(CompanyConstantsCSV.postTown),
+        c(CompanyConstantsCSV.county),
+        c(CompanyConstantsCSV.postcode),
+        c(CompanyConstantsCSV.accountRefDay),
+        c(CompanyConstantsCSV.accountRefMonth),
+        c(CompanyConstantsCSV.accountNextDueDate),
+        c(CompanyConstantsCSV.accountLastMadeUpDate),
+        c(CompanyConstantsCSV.accountCategory),
+        c(CompanyConstantsCSV.returnsNextDueDate),
+        c(CompanyConstantsCSV.returnsLastMadeUpDate),
+        c(CompanyConstantsCSV.sicCodeSicText1),
+        c(CompanyConstantsCSV.sicCodeSicText2),
+        c(CompanyConstantsCSV.sicCodeSicText3),
+        c(CompanyConstantsCSV.sicCodeSicText4)
+      )
     )
     Logger.info(s"Loaded in ${listOfCaseClasses.length} companies from CSV file")
     listOfCaseClasses
