@@ -8,6 +8,8 @@ An API for use by sbr-api for accessing CompanyHouse/VAT/PAYE data
 | method | endpoint                     | example                  |
 |--------|------------------------------|--------------------------|
 | GET    | /v1/company/${companyNumber} | GET /v1/company/AB123456 |
+| GET    | /v1/vat/${vatReference}      | GET /v1/vat/123456789012 |
+| GET    | /v1/paye/${payeReference}    | GET /v1/paye/12345678    |
 
 ## Environment Setup
 
@@ -32,7 +34,7 @@ Swap the `csv` argument with any of the values in the table below:
 
 | -Dsource value | Data Access                                                                                     |
 |----------------|-------------------------------------------------------------------------------------------------|
-| csv            | Local [CSV file](./conf/sample/company_house_data.csv) (first 10,000 rows of CompanyHouse data) |
+| csv            | Local CSV files `./conf/sample/...` (Real CompanyHouse data, test VAT/PAYE data)                |
 | hiveLocal      | Hive which runs inside the Hortonworks VM (setup described above)                               |
 | hbaseLocal     | A local hbase installation (not in a VM)                                                        |
 | hiveCloudera   | Hive which runs on Cloudera (requires Kerboros setup etc.)                                      |
