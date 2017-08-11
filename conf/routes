@@ -4,6 +4,8 @@
 
 # Searching Feature
 GET     /v1/company/:companyNumber  controllers.v1.SearchController.getCompanyById(companyNumber)
+GET     /v1/vat/:vatRef             controllers.v1.SearchController.getVatById(vatRef)
+GET     /v1/paye/:payeRef           controllers.v1.SearchController.getPayeById(payeRef)
 GET     /                           controllers.HomeController.status
 
 # Route for deployed version information (in JSON).

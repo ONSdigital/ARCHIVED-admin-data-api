@@ -6,6 +6,7 @@ import play.api.libs.json._
 import play.api.mvc.Result
 
 import scala.concurrent.Future
+import scala.io.Source
 
 /**
  * Created by coolit on 18/07/2017.
@@ -39,11 +40,9 @@ object Utilities {
    *  @param conditions Any number of regex strings
    *  @return boolean
    */
-  def checkRegex(toCheck: String, conditions: String*): Boolean =
-    conditions
-      .toList
-      .map(x => toCheck.matches(x))
-      .foldLeft(true)(_ || _)
+  def checkRegex(toCheck: String, conditions: String*): Boolean = conditions.toList
+    .map(x => toCheck.matches(x))
+    .foldLeft(false)(_ || _)
 
   /**
    * Method source: https://github.com/outworkers/util/blob/develop/util-play/src/main/scala/com/outworkers/util/play/package.scala#L98
@@ -52,5 +51,11 @@ object Utilities {
     def future: Future[Result] = {
       Future.successful(res)
     }
+  }
+
+  def readCsv(fileName: String): List[List[String]] = {
+    Source.fromFile(fileName).getLines.toList.map(
+      _.split(",").toList
+    )
   }
 }

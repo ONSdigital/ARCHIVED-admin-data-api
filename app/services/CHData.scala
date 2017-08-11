@@ -13,6 +13,7 @@ import javax.inject.Inject
 import uk.gov.ons.sbr.data.controller.AdminDataController
 import uk.gov.ons.sbr.data.hbase.HBaseConnector
 import uk.gov.ons.sbr.data.domain.CompanyRegistration
+import utils.Utilities._
 
 import scala.util.{ Failure, Success, Try }
 
@@ -23,14 +24,12 @@ import scala.util.{ Failure, Success, Try }
 @Singleton
 class CHData @Inject() (implicit val config: Config) {
   val src = config.getString("source")
-  val ch = if (src == "csv") readChCSV(config.getString("filename")) else List()
+  val ch = if (src == "csv") readChCSV(config.getString("chFilename")) else List()
 
-  def getCompanyById(companyNumber: String): Try[List[SearchKeys]] = {
-    src match {
-      case "csv" => Try(ch.filter(_.CompanyNumber == s""""$companyNumber""""))
-      case "hiveLocal" => Try(getCompanyFromDb(companyNumber))
-      case "hbaseLocal" => Try(getCompanyFromHbase(companyNumber))
-    }
+  def getCompanyById(companyNumber: String): Try[List[SearchKeys]] = src match {
+    case "csv" => Try(ch.filter(_.CompanyNumber == s""""$companyNumber""""))
+    case "hiveLocal" => Try(getCompanyFromDb(companyNumber))
+    case "hbaseLocal" => Try(getCompanyFromHbase(companyNumber))
   }
 
   def optionConverter(o: Optional[CompanyRegistration]): Option[CompanyRegistration] =
@@ -48,10 +47,7 @@ class CHData @Inject() (implicit val config: Config) {
 
   def readChCSV(fileName: String): List[Company] = {
     Logger.info(s"Loading in CSV file: ${fileName}")
-    val listOfLines = Source.fromFile(fileName).getLines.toList
-    val listOfLists: List[List[String]] = listOfLines.map(
-      _.split(",").toList
-    )
+    val listOfLists = readCsv(fileName)
     val listOfCaseClasses: List[Company] = listOfLists.map(
       c => Company(
         c(CompanyConstantsCSV.companyName),
