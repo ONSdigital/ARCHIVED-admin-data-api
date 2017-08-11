@@ -2,11 +2,15 @@ package utils
 
 import java.io.File
 import java.util.Optional
+import java.util.concurrent.atomic.AtomicInteger
 
+import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.Result
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ Await, Future }
+import scala.concurrent.duration._
 import scala.io.Source
 
 /**
@@ -54,11 +58,20 @@ object Utilities {
     }
   }
 
+  // Source: https://github.com/ONSdigital/business-index-api/blob/develop/api/app/uk/gov/ons/bi/CsvProcessor.scala#L30
   def readCsv(fileName: String): List[List[String]] = {
-    Source.fromFile(fileName).getLines.drop(1).toList.map(
-      _.split(",").toList
-    )
+    val counter = new AtomicInteger(0)
+    val res = Source.fromFile(fileName).getLines.drop(1).toList.map { line =>
+      Future {
+        val c = counter.incrementAndGet()
+        if (c % 1000 == 0) Logger.debug(s"Processed 1000 lines of $fileName")
+        splitCsvLine(line)
+      }
+    }
+    Await.result(Future.sequence(res), 2 minutes)
   }
+
+  def splitCsvLine(line: String): List[String] = line.split(",").toList // .map(v => unquote(v.trim))
 
   def optionConverter[T](o: Optional[T]): Option[T] = if (o.isPresent) Some(o.get) else None
 }
