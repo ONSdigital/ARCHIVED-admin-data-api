@@ -1,10 +1,8 @@
 package services
 
 import java.sql.{ Connection, DriverManager, ResultSet, Statement }
-import java.util.Optional
 import javax.inject.Singleton
 
-import scala.io.Source
 import play.api.Logger
 import models.{ Company, CompanyConstantsCSV, SearchKeys, Unit }
 import com.typesafe.config.Config
@@ -12,7 +10,6 @@ import javax.inject.Inject
 
 import uk.gov.ons.sbr.data.controller.AdminDataController
 import uk.gov.ons.sbr.data.hbase.HBaseConnector
-import uk.gov.ons.sbr.data.domain.CompanyRegistration
 import utils.Utilities._
 
 import scala.util.{ Failure, Success, Try }
