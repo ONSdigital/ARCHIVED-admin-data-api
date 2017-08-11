@@ -21,56 +21,56 @@ class SearchController @Inject() (chData: CHData, vatData: VATData, payeData: PA
 
   @ApiOperation(
     value = "JSON of the matching company",
-    notes = "The company is matched only on id",
+    notes = "The company is matched on CompanyNumber",
     responseContainer = "JSONObject",
     code = 200,
     httpMethod = "GET"
   )
   @ApiResponses(Array(
     new ApiResponse(code = 200, responseContainer = "JSONObject", message = "Success -> Record found for id."),
-    new ApiResponse(code = 400, responseContainer = "JSONObject", message = "Client Side Error -> Required parameter was not found."),
     new ApiResponse(code = 404, responseContainer = "JSONObject", message = "Client Side Error -> Id not found."),
+    new ApiResponse(code = 422, responseContainer = "JSONObject", message = "Client Side Error -> Wrong companyNumber format."),
     new ApiResponse(code = 500, responseContainer = "JSONObject", message = "Server Side Error -> Request could not be completed.")
   ))
-  def getCompanyById(@ApiParam(value = "An identifier of any type", example = "87395710", required = true) companyNumber: String): Action[AnyContent] = {
+  def getCompanyById(@ApiParam(value = "A valid companyNumber, [A-Z]{2}d{6} or [0-9]{8}", example = "AB123456", required = true) companyNumber: String): Action[AnyContent] = {
     Action.async { implicit request =>
       getRefById(companyNumber, "company")
     }
   }
 
   @ApiOperation(
-    value = "JSON of the matching company",
-    notes = "The company is matched only on id",
+    value = "JSON of the matching VAT record",
+    notes = "The VAT record is matched on VAT reference number",
     responseContainer = "JSONObject",
     code = 200,
     httpMethod = "GET"
   )
   @ApiResponses(Array(
     new ApiResponse(code = 200, responseContainer = "JSONObject", message = "Success -> Record found for id."),
-    new ApiResponse(code = 400, responseContainer = "JSONObject", message = "Client Side Error -> Required parameter was not found."),
     new ApiResponse(code = 404, responseContainer = "JSONObject", message = "Client Side Error -> Id not found."),
+    new ApiResponse(code = 422, responseContainer = "JSONObject", message = "Client Side Error -> Wrong companyNumber format."),
     new ApiResponse(code = 500, responseContainer = "JSONObject", message = "Server Side Error -> Request could not be completed.")
   ))
-  def getVatById(@ApiParam(value = "An identifier of any type", example = "87395710", required = true) vatRef: String): Action[AnyContent] = {
+  def getVatById(@ApiParam(value = "A valid VAT reference, [0-9]{12}", example = "123456789012", required = true) vatRef: String): Action[AnyContent] = {
     Action.async { implicit request =>
       getRefById(vatRef, "vat")
     }
   }
 
   @ApiOperation(
-    value = "JSON of the matching company",
-    notes = "The company is matched only on id",
+    value = "JSON of the matching PAYE record",
+    notes = "The PAYE record is matched on PAYE reference number",
     responseContainer = "JSONObject",
     code = 200,
     httpMethod = "GET"
   )
   @ApiResponses(Array(
     new ApiResponse(code = 200, responseContainer = "JSONObject", message = "Success -> Record found for id."),
-    new ApiResponse(code = 400, responseContainer = "JSONObject", message = "Client Side Error -> Required parameter was not found."),
     new ApiResponse(code = 404, responseContainer = "JSONObject", message = "Client Side Error -> Id not found."),
+    new ApiResponse(code = 422, responseContainer = "JSONObject", message = "Client Side Error -> Wrong companyNumber format."),
     new ApiResponse(code = 500, responseContainer = "JSONObject", message = "Server Side Error -> Request could not be completed.")
   ))
-  def getPayeById(@ApiParam(value = "An identifier of any type", example = "87395710", required = true) payeRef: String): Action[AnyContent] = {
+  def getPayeById(@ApiParam(value = "A valid PAYE reference, [0-9]{5,13}", example = "12345678", required = true) payeRef: String): Action[AnyContent] = {
     Action.async { implicit request =>
       getRefById(payeRef, "paye")
     }
