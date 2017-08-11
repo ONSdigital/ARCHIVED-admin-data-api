@@ -32,9 +32,6 @@ class CHData @Inject() (implicit val config: Config) {
     case "hbaseLocal" => Try(getCompanyFromHbase(companyNumber))
   }
 
-  def optionConverter(o: Optional[CompanyRegistration]): Option[CompanyRegistration] =
-    if (o.isPresent) Some(o.get) else None
-
   def getCompanyFromHbase(companyNumber: String): List[Unit] = {
     HBaseConnector.getInstance().connect()
     val adminController = new AdminDataController()

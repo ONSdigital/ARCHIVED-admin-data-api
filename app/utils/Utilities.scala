@@ -1,6 +1,7 @@
 package utils
 
 import java.io.File
+import java.util.Optional
 
 import play.api.libs.json._
 import play.api.mvc.Result
@@ -58,4 +59,6 @@ object Utilities {
       _.split(",").toList
     )
   }
+
+  def optionConverter[T](o: Optional[T]): Option[T] = if (o.isPresent) Some(o.get) else None
 }
