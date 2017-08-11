@@ -46,7 +46,7 @@ object Utilities {
       .foldLeft(true)(_ || _)
 
   /**
-   * Make results futures, Ok("").future not just Ok("")
+   * Method source: https://github.com/outworkers/util/blob/develop/util-play/src/main/scala/com/outworkers/util/play/package.scala#L98
    */
   implicit class ResultAugmenter(val res: Result) {
     def future: Future[Result] = {
