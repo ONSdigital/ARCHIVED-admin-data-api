@@ -8,7 +8,7 @@ import javax.inject.Inject
 import com.typesafe.config.Config
 import play.api.Logger
 import models._
-import services.{ CHData, PAYEData, VATData }
+import services._
 
 import scala.concurrent.Future
 import scala.util.{ Failure, Success, Try }
@@ -17,7 +17,9 @@ import scala.util.{ Failure, Success, Try }
  * Created by coolit on 18/07/2017.
  */
 @Api("Search")
-class SearchController @Inject() (chData: CHData, vatData: VATData, payeData: PAYEData, val config: Config) extends ControllerUtils {
+class SearchController @Inject() (data: DataAccess, val config: Config) extends ControllerUtils {
+
+  val src = config.getString("source")
 
   @ApiOperation(
     value = "JSON of the matching company",
@@ -80,7 +82,7 @@ class SearchController @Inject() (chData: CHData, vatData: VATData, payeData: PA
     val src: String = config.getString("source")
     Logger.info(s"Searching for $refType with id: ${id} in source: ${src}")
     val res = id match {
-      case id if validateId(id, refType) => getRefFromSource(id, refType) match {
+      case id if validateId(id, refType) => data.getRecordById(id, refType) match {
         case Success(results) => results match {
           case Nil => NotFound(errAsJson(404, "Not Found", s"Could not find value ${id}")).future
           case x => x.head match {
@@ -95,12 +97,6 @@ class SearchController @Inject() (chData: CHData, vatData: VATData, payeData: PA
       case _ => UnprocessableEntity(errAsJson(422, "Unprocessable Entity", "Please ensure the vat/ch/paye reference is the correct length/format")).future
     }
     res
-  }
-
-  def getRefFromSource(id: String, refType: String): Try[List[SearchKeys]] = refType match {
-    case "company" => chData.getCompanyById(id)
-    case "paye" => payeData.getPAYEById(id)
-    case "vat" => vatData.getVATById(id)
   }
 
   def validateId(id: String, refType: String): Boolean = refType match {

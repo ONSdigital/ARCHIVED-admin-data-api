@@ -1,16 +1,11 @@
 package services
 
 import java.sql.{ Connection, DriverManager, ResultSet, Statement }
-import javax.inject.Singleton
+import javax.inject.{ Inject, Singleton }
 
-import play.api.Logger
-import models.{ Company, CompanyConstantsCSV, SearchKeys, Unit }
 import com.typesafe.config.Config
-import javax.inject.Inject
-
-import uk.gov.ons.sbr.data.controller.AdminDataController
-import uk.gov.ons.sbr.data.hbase.HBaseConnector
-import utils.Utilities._
+import models.{ Company, SearchKeys }
+import play.api.Logger
 
 import scala.util.{ Failure, Success, Try }
 
@@ -19,34 +14,12 @@ import scala.util.{ Failure, Success, Try }
  * When the application starts, this will be accessible in the controllers through the use of @Inject()
  */
 @Singleton
-class CHData @Inject() (implicit val config: Config) {
-  val src = config.getString("source")
-  val ch = if (src == "csv") readChCSV(config.getString("chFilename")) else List()
+class HiveData @Inject() (implicit val config: Config) extends DataAccess {
 
-  def getCompanyById(companyNumber: String): Try[List[SearchKeys]] = src match {
-    case "csv" => Try(ch.filter(_.CompanyNumber == s""""$companyNumber""""))
-    case "hiveLocal" => Try(getCompanyFromDb(companyNumber))
-    case "hbaseLocal" => Try(getCompanyFromHbase(companyNumber))
-  }
-
-  def getCompanyFromHbase(companyNumber: String): List[Unit] = {
-    HBaseConnector.getInstance().connect()
-    val adminController = new AdminDataController()
-    val c = adminController.getCompanyRegistration(companyNumber)
-    optionConverter(c) match {
-      case Some(c) => Unit.mapToUnitList(c)
-      case None => List()
-    }
-  }
-
-  def readChCSV(fileName: String): List[Company] = {
-    Logger.info(s"Loading in CSV file: ${fileName}")
-    val listOfLists = readCsv(fileName)
-    val listOfCaseClasses: List[Company] = readCsv(fileName).map(
-      c => Company.stringsToCaseClass(c)
-    )
-    Logger.info(s"Loaded in ${listOfCaseClasses.length} companies from CSV file")
-    listOfCaseClasses
+  def getRecordById(id: String, recordType: String): Try[List[SearchKeys]] = recordType match {
+    case "company" => Try(getCompanyFromDb(id))
+    case "vat" => Try(List())
+    case "paye" => Try(List())
   }
 
   def getDbConnection(): Try[Connection] = {

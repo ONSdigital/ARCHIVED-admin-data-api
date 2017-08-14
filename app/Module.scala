@@ -21,7 +21,12 @@ class Module(environment: Environment, configuration: Configuration) extends Abs
   override def configure() = {
     val config = SbrConfigManager.envConf(ConfigFactory.load())
     bind(classOf[Config]).toInstance(config)
-    // Use the system clock as the default implementation of Clock
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone)
+
+    config.getString("source") match {
+      case "csv" => bind(classOf[DataAccess]).to(classOf[CSVData])
+      case "hbaseLocal" => bind(classOf[DataAccess]).to(classOf[HBaseData])
+      case "hiveLocal" => bind(classOf[DataAccess]).to(classOf[HiveData])
+    }
   }
 }
