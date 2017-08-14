@@ -26,37 +26,8 @@ class VATData @Inject() (implicit val config: Config) {
 
   def readVATCSV(fileName: String): List[VAT] = {
     Logger.info(s"Loading in CSV file: ${fileName}")
-    val listOfLists = readCsv(fileName)
-    val listOfCaseClasses: List[VAT] = listOfLists.map(
-      v => VAT(
-        v(VATConstantsCSV.entref),
-        v(VATConstantsCSV.vatref),
-        v(VATConstantsCSV.deathcode),
-        v(VATConstantsCSV.birthdate),
-        v(VATConstantsCSV.deathdate),
-        v(VATConstantsCSV.sic92),
-        v(VATConstantsCSV.turnover),
-        v(VATConstantsCSV.turnover_date),
-        v(VATConstantsCSV.record_type),
-        v(VATConstantsCSV.legalstatus),
-        v(VATConstantsCSV.actiondate),
-        v(VATConstantsCSV.crn),
-        v(VATConstantsCSV.marker),
-        v(VATConstantsCSV.addressref),
-        v(VATConstantsCSV.inqcode),
-        v(VATConstantsCSV.nameline1),
-        v(VATConstantsCSV.nameline2),
-        v(VATConstantsCSV.nameline3),
-        v(VATConstantsCSV.tradstyle1),
-        v(VATConstantsCSV.tradstyle2),
-        v(VATConstantsCSV.tradstyle3),
-        v(VATConstantsCSV.address1),
-        v(VATConstantsCSV.address2),
-        v(VATConstantsCSV.address3),
-        v(VATConstantsCSV.address4),
-        v(VATConstantsCSV.address5),
-        v(VATConstantsCSV.postcode)
-      )
+    val listOfCaseClasses: List[VAT] = readCsv(fileName).map(
+      v => VAT.stringsToCaseClass(v)
     )
     Logger.info(s"Loaded in ${listOfCaseClasses.length} VAT records from CSV file")
     listOfCaseClasses

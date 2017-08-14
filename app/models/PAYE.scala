@@ -95,6 +95,48 @@ object PAYE {
   }
 
   def toJson(paye: PAYE): JsValue = Json.toJson(paye)
+
+  def stringsToCaseClass(payeRecord: List[String]): PAYE = {
+    PAYE(
+      payeRecord(PAYEConstantsCSV.entref),
+      payeRecord(PAYEConstantsCSV.payeref),
+      payeRecord(PAYEConstantsCSV.deathcode),
+      payeRecord(PAYEConstantsCSV.birthdate),
+      payeRecord(PAYEConstantsCSV.deathdate),
+      payeRecord(PAYEConstantsCSV.mfullemp),
+      payeRecord(PAYEConstantsCSV.msubemp),
+      payeRecord(PAYEConstantsCSV.ffullemp),
+      payeRecord(PAYEConstantsCSV.fsubemp),
+      payeRecord(PAYEConstantsCSV.unclemp),
+      payeRecord(PAYEConstantsCSV.unclsubemp),
+      payeRecord(PAYEConstantsCSV.dec_jobs),
+      payeRecord(PAYEConstantsCSV.mar_jobs),
+      payeRecord(PAYEConstantsCSV.june_jobs),
+      payeRecord(PAYEConstantsCSV.sept_jobs),
+      payeRecord(PAYEConstantsCSV.jobs_lastupd),
+      payeRecord(PAYEConstantsCSV.legalstatus),
+      payeRecord(PAYEConstantsCSV.prevpaye),
+      payeRecord(PAYEConstantsCSV.employer_cat),
+      payeRecord(PAYEConstantsCSV.stc),
+      payeRecord(PAYEConstantsCSV.crn),
+      payeRecord(PAYEConstantsCSV.actiondate),
+      payeRecord(PAYEConstantsCSV.addressref),
+      payeRecord(PAYEConstantsCSV.marker),
+      payeRecord(PAYEConstantsCSV.inqcode),
+      payeRecord(PAYEConstantsCSV.nameline1),
+      payeRecord(PAYEConstantsCSV.nameline2),
+      payeRecord(PAYEConstantsCSV.nameline3),
+      payeRecord(PAYEConstantsCSV.tradstyle1),
+      payeRecord(PAYEConstantsCSV.tradstyle2),
+      payeRecord(PAYEConstantsCSV.tradstyle3),
+      payeRecord(PAYEConstantsCSV.address1),
+      payeRecord(PAYEConstantsCSV.address2),
+      payeRecord(PAYEConstantsCSV.address3),
+      payeRecord(PAYEConstantsCSV.address4),
+      payeRecord(PAYEConstantsCSV.address5),
+      payeRecord(PAYEConstantsCSV.postcode)
+    )
+  }
 }
 
 object PAYEConstantsCSV {

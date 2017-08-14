@@ -75,6 +75,38 @@ object VAT {
   }
 
   def toJson(vat: VAT): JsValue = Json.toJson(vat)
+
+  def stringsToCaseClass(vatRecord: List[String]): VAT = {
+    VAT(
+      vatRecord(VATConstantsCSV.entref),
+      vatRecord(VATConstantsCSV.vatref),
+      vatRecord(VATConstantsCSV.deathcode),
+      vatRecord(VATConstantsCSV.birthdate),
+      vatRecord(VATConstantsCSV.deathdate),
+      vatRecord(VATConstantsCSV.sic92),
+      vatRecord(VATConstantsCSV.turnover),
+      vatRecord(VATConstantsCSV.turnover_date),
+      vatRecord(VATConstantsCSV.record_type),
+      vatRecord(VATConstantsCSV.legalstatus),
+      vatRecord(VATConstantsCSV.actiondate),
+      vatRecord(VATConstantsCSV.crn),
+      vatRecord(VATConstantsCSV.marker),
+      vatRecord(VATConstantsCSV.addressref),
+      vatRecord(VATConstantsCSV.inqcode),
+      vatRecord(VATConstantsCSV.nameline1),
+      vatRecord(VATConstantsCSV.nameline2),
+      vatRecord(VATConstantsCSV.nameline3),
+      vatRecord(VATConstantsCSV.tradstyle1),
+      vatRecord(VATConstantsCSV.tradstyle2),
+      vatRecord(VATConstantsCSV.tradstyle3),
+      vatRecord(VATConstantsCSV.address1),
+      vatRecord(VATConstantsCSV.address2),
+      vatRecord(VATConstantsCSV.address3),
+      vatRecord(VATConstantsCSV.address4),
+      vatRecord(VATConstantsCSV.address5),
+      vatRecord(VATConstantsCSV.postcode)
+    )
+  }
 }
 
 object VATConstantsCSV {

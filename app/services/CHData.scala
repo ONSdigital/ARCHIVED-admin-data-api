@@ -42,31 +42,8 @@ class CHData @Inject() (implicit val config: Config) {
   def readChCSV(fileName: String): List[Company] = {
     Logger.info(s"Loading in CSV file: ${fileName}")
     val listOfLists = readCsv(fileName)
-    val listOfCaseClasses: List[Company] = listOfLists.map(
-      c => Company(
-        c(CompanyConstantsCSV.companyName),
-        c(CompanyConstantsCSV.companyNumber),
-        c(CompanyConstantsCSV.companyCategory),
-        c(CompanyConstantsCSV.companyStatus),
-        c(CompanyConstantsCSV.countryOfOrigin),
-        c(CompanyConstantsCSV.incorporationDate),
-        c(CompanyConstantsCSV.addressLine1),
-        c(CompanyConstantsCSV.addressLine2),
-        c(CompanyConstantsCSV.postTown),
-        c(CompanyConstantsCSV.county),
-        c(CompanyConstantsCSV.postcode),
-        c(CompanyConstantsCSV.accountRefDay),
-        c(CompanyConstantsCSV.accountRefMonth),
-        c(CompanyConstantsCSV.accountNextDueDate),
-        c(CompanyConstantsCSV.accountLastMadeUpDate),
-        c(CompanyConstantsCSV.accountCategory),
-        c(CompanyConstantsCSV.returnsNextDueDate),
-        c(CompanyConstantsCSV.returnsLastMadeUpDate),
-        c(CompanyConstantsCSV.sicCodeSicText1),
-        c(CompanyConstantsCSV.sicCodeSicText2),
-        c(CompanyConstantsCSV.sicCodeSicText3),
-        c(CompanyConstantsCSV.sicCodeSicText4)
-      )
+    val listOfCaseClasses: List[Company] = readCsv(fileName).map(
+      c => Company.stringsToCaseClass(c)
     )
     Logger.info(s"Loaded in ${listOfCaseClasses.length} companies from CSV file")
     listOfCaseClasses
