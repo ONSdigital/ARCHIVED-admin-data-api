@@ -1,5 +1,6 @@
 package services
 
+import java.time.YearMonth
 import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.Config
@@ -24,6 +25,12 @@ class CSVData @Inject() (implicit val config: Config) extends DataAccess {
     case "company" => Try(ch.filter(_.asInstanceOf[Company].CompanyNumber == s""""$id""""))
     case "vat" => Try(vat.filter(_.asInstanceOf[VAT].vatref == s"$id"))
     case "paye" => Try(paye.filter(_.asInstanceOf[PAYE].payeref == s"$id"))
+  }
+
+  def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): Try[List[SearchKeys]] = recordType match {
+    case "company" => Try(List())
+    case "vat" => Try(List())
+    case "paye" => Try(List())
   }
 
   def readCSV(fileName: String, recordType: String): List[SearchKeys] = {

@@ -1,6 +1,7 @@
 package services
 
 import java.sql.{ Connection, DriverManager, ResultSet, Statement }
+import java.time.YearMonth
 import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.Config
@@ -18,6 +19,12 @@ class HiveData @Inject() (implicit val config: Config) extends DataAccess {
 
   def getRecordById(id: String, recordType: String): Try[List[SearchKeys]] = recordType match {
     case "company" => Try(getCompanyFromDb(id))
+    case "vat" => Try(List())
+    case "paye" => Try(List())
+  }
+
+  def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): Try[List[SearchKeys]] = recordType match {
+    case "company" => Try(List())
     case "vat" => Try(List())
     case "paye" => Try(List())
   }

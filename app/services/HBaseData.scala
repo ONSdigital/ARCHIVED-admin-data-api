@@ -1,9 +1,11 @@
 package services
 
+import java.time.YearMonth
 import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.Config
 import models.{ SearchKeys, Unit }
+import play.api.Logger
 import uk.gov.ons.sbr.data.controller.AdminDataController
 import uk.gov.ons.sbr.data.hbase.HBaseConnector
 import utils.Utilities._
@@ -23,11 +25,27 @@ class HBaseData @Inject() (implicit val config: Config) extends DataAccess {
     case "paye" => Try(List())
   }
 
+  def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): Try[List[SearchKeys]] = recordType match {
+    case "company" => Try(getCompanyFromHbaseForPeriod(id, period))
+    case "vat" => Try(List())
+    case "paye" => Try(List())
+  }
+
   def getCompanyFromHbase(companyNumber: String): List[Unit] = {
     HBaseConnector.getInstance().connect()
     val adminController = new AdminDataController()
-    val c = adminController.getCompanyRegistration(companyNumber)
-    optionConverter(c) match {
+    val company = adminController.getCompanyRegistration(companyNumber)
+    optionConverter(company) match {
+      case Some(c) => Unit.mapToUnitList(c)
+      case None => List()
+    }
+  }
+
+  def getCompanyFromHbaseForPeriod(companyNumber: String, period: YearMonth): List[Unit] = {
+    HBaseConnector.getInstance().connect()
+    val adminController = new AdminDataController()
+    val company = adminController.getCompanyRegistrationForReferencePeriod(period, companyNumber)
+    optionConverter(company) match {
       case Some(c) => Unit.mapToUnitList(c)
       case None => List()
     }
