@@ -4,8 +4,7 @@ import io.swagger.annotations._
 import play.api.mvc.{ Action, AnyContent, Result }
 import utils.Utilities._
 import javax.inject.Inject
-import java.time.{ DateTimeException, YearMonth }
-import java.time.format.DateTimeFormatter
+import java.time.{ DateTimeException }
 
 import com.typesafe.config.Config
 import play.api.Logger
@@ -124,8 +123,8 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
     val src: String = config.getString("source")
     Logger.info(s"Searching for $refType with id: ${id} in source: ${src}")
     val res = id match {
-      case id if validateId(id, refType) => periodToYearMonth(period) match {
-        case validPeriod => data.getRecordByIdForPeriod(id, validPeriod, refType) match {
+      case id if validateId(id, refType) => Try(periodToYearMonth(period)) match {
+        case Success(validPeriod) => data.getRecordByIdForPeriod(id, validPeriod, refType) match {
           case Success(results) => results match {
             case Nil => NotFound(errAsJson(404, "Not Found", s"Could not find value ${id}")).future
             case x => x.head match {
@@ -136,16 +135,12 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
             }
           }
           case Failure(e) => InternalServerError(errAsJson(500, "Internal Server Error", s"An error has occurred, please contact the server administrator")).future
-        } // DateTimeException
-        case _ => UnprocessableEntity(errAsJson(422, "Unprocessable Entity", "Please ensure the period is in the following format: YYYYMM")).future
+        }
+        case Failure(e: DateTimeException) => UnprocessableEntity(errAsJson(422, "Unprocessable Entity", "Please ensure the period is in the following format: YYYYMM")).future
       }
       case _ => UnprocessableEntity(errAsJson(422, "Unprocessable Entity", "Please ensure the vat/ch/paye reference is the correct length/format")).future
     }
     res
-  }
-
-  def periodToYearMonth(period: String): YearMonth = {
-    YearMonth.parse(period.slice(0, 6), DateTimeFormatter.ofPattern("yyyyMM"))
   }
 
   def validateId(id: String, refType: String): Boolean = refType match {

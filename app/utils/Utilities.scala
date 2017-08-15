@@ -1,6 +1,8 @@
 package utils
 
 import java.io.File
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import java.util.Optional
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -74,4 +76,8 @@ object Utilities {
   def splitCsvLine(line: String): List[String] = line.split(",").toList // .map(v => unquote(v.trim))
 
   def optionConverter[T](o: Optional[T]): Option[T] = if (o.isPresent) Some(o.get) else None
+
+  def periodToYearMonth(period: String): YearMonth = {
+    YearMonth.parse(period.slice(0, 6), DateTimeFormatter.ofPattern("yyyyMM"))
+  }
 }
