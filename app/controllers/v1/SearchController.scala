@@ -10,7 +10,6 @@ import com.typesafe.config.Config
 import play.api.Logger
 import models._
 import services._
-import uk.gov.ons.sbr.data.hbase.HBaseTest
 
 import scala.concurrent.Future
 import scala.util.{ Failure, Success, Try }

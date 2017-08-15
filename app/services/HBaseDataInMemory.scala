@@ -22,8 +22,9 @@ import scala.util.Try
 @Singleton
 class HBaseDataInMemory @Inject() (implicit val config: Config) extends DataAccess {
 
-  //  HBaseTest.init()
-  //  val bulkLoader = new BulkLoader()
+  //HBaseTest.init()
+  // HBaseTestUtilities.startMiniCluster
+  // val bulkLoader = new BulkLoader()
   //  val unitType = UnitType.COMPANY_REGISTRATION.toString
   //  val args = Array[String](unitType, "201701", "conf/sample/company_house_data.csv")
   //  ToolRunner.run(HBaseConnector.getInstance().getConfiguration(), bulkLoader, args)

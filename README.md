@@ -27,7 +27,7 @@ With the minimal environment setup described above (just Java 8 and SBT), the sb
 To run the `sbr-ch-data-api`, run the following:
 
 ``` shell
-sbt api/run -Dsource=csv
+sbt "api/run -Dsource=csv"
 ```
 
 Swap the `csv` argument with any of the values in the table below:
