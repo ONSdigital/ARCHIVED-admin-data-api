@@ -26,6 +26,7 @@ class Module(environment: Environment, configuration: Configuration) extends Abs
     config.getString("source") match {
       case "csv" => bind(classOf[DataAccess]).to(classOf[CSVData])
       case "hbaseLocal" => bind(classOf[DataAccess]).to(classOf[HBaseData])
+      case "hbaseInMemory" => bind(classOf[DataAccess]).to(classOf[HBaseDataInMemory])
       case "hiveLocal" => bind(classOf[DataAccess]).to(classOf[HiveData])
     }
   }

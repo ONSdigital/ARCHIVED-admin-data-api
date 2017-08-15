@@ -86,7 +86,9 @@ lazy val api = (project in file("."))
       "mysql"                        %     "mysql-connector-java" %   "5.1.35",
       "org.apache.hbase"             %     "hbase-client"        %    "1.3.1",
       "org.apache.hbase"             %     "hbase-common"        %    "1.3.1",
-      "org.slf4j"                    %     "slf4j-api"           %    "1.7.25"
+      "org.slf4j"                    %     "slf4j-api"           %    "1.7.25",
+      "org.apache.hbase"             %     "hbase-testing-util"  %    "1.3.1" % "test",
+      "org.apache.hbase"             %     "hbase-server"        %    "1.3.1"
     ),
     assemblyJarName in assembly := "sbr-admin-data-api.jar",
     assemblyMergeStrategy in assembly := {

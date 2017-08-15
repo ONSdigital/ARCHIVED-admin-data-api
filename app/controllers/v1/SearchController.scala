@@ -4,12 +4,13 @@ import io.swagger.annotations._
 import play.api.mvc.{ Action, AnyContent, Result }
 import utils.Utilities._
 import javax.inject.Inject
-import java.time.{ DateTimeException }
+import java.time.DateTimeException
 
 import com.typesafe.config.Config
 import play.api.Logger
 import models._
 import services._
+import uk.gov.ons.sbr.data.hbase.HBaseTest
 
 import scala.concurrent.Future
 import scala.util.{ Failure, Success, Try }
