@@ -17,16 +17,16 @@ import scala.util.{ Failure, Success, Try }
 @Singleton
 class HiveData @Inject() (implicit val config: Config) extends DataAccess {
 
-  def getRecordById(id: String, recordType: String): Try[List[SearchKeys]] = recordType match {
-    case "company" => Try(getCompanyFromDb(id))
-    case "vat" => Try(List())
-    case "paye" => Try(List())
+  def getRecordById(id: String, recordType: String): List[SearchKeys] = recordType match {
+    case "company" => getCompanyFromDb(id)
+    case "vat" => List()
+    case "paye" => List()
   }
 
-  def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): Try[List[SearchKeys]] = recordType match {
-    case "company" => Try(List())
-    case "vat" => Try(List())
-    case "paye" => Try(List())
+  def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): List[SearchKeys] = recordType match {
+    case "company" => List()
+    case "vat" => List()
+    case "paye" => List()
   }
 
   def getDbConnection(): Try[Connection] = {
@@ -36,7 +36,7 @@ class HiveData @Inject() (implicit val config: Config) extends DataAccess {
     Class.forName("org.apache.hive.jdbc.HiveDriver")
     Logger.trace(s"Creating JDBC connection with url [${url}]")
     Try(DriverManager.getConnection(url, username, password)).recoverWith {
-      case e: Exception => Failure(new Exception("Unable to create JDBC connection to Hive"))
+      case _: Exception => Failure(new Exception("Unable to create JDBC connection to Hive"))
     }
   }
 

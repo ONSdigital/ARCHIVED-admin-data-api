@@ -11,8 +11,8 @@ GET     /v1/payes/:payeRef            controllers.v1.SearchController.getPayeByI
 
 # Searching Company/VAT/PAYE for a specific period
 GET     /v1/periods/:period/companies/:companyNumber   controllers.v1.SearchController.getCompanyByIdForPeriod(companyNumber, period)
-# GET     /v1/periods/:period/vats/:vatRef               controllers.v1.SearchController.getVatByIdForPeriod(vatRef, period)
-# GET     /v1/periods/:period/payes/:payeRef             controllers.v1.SearchController.getPayeByIdForPeriod(payeRef, period)
+GET     /v1/periods/:period/vats/:vatRef               controllers.v1.SearchController.getVatByIdForPeriod(vatRef, period)
+GET     /v1/periods/:period/payes/:payeRef             controllers.v1.SearchController.getPayeByIdForPeriod(payeRef, period)
 
 # Route for deployed version information (in JSON).
 GET     /version                      controllers.VersionController.version

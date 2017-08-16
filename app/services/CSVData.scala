@@ -21,16 +21,16 @@ class CSVData @Inject() (implicit val config: Config) extends DataAccess {
   val paye = readCSV(config.getString("payeFilename"), "paye")
 
   // TODO: remove asInstanceOf[], bad practice
-  def getRecordById(id: String, recordType: String): Try[List[SearchKeys]] = recordType match {
-    case "company" => Try(ch.filter(_.asInstanceOf[Company].CompanyNumber == s"$id"))
-    case "vat" => Try(vat.filter(_.asInstanceOf[VAT].vatref == s"$id"))
-    case "paye" => Try(paye.filter(_.asInstanceOf[PAYE].payeref == s"$id"))
+  def getRecordById(id: String, recordType: String): List[SearchKeys] = recordType match {
+    case "company" => ch.filter(_.asInstanceOf[Company].CompanyNumber == s"$id")
+    case "vat" => vat.filter(_.asInstanceOf[VAT].vatref == s"$id")
+    case "paye" => paye.filter(_.asInstanceOf[PAYE].payeref == s"$id")
   }
 
-  def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): Try[List[SearchKeys]] = recordType match {
-    case "company" => Try(List())
-    case "vat" => Try(List())
-    case "paye" => Try(List())
+  def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): List[SearchKeys] = recordType match {
+    case "company" => List()
+    case "vat" => List()
+    case "paye" => List()
   }
 
   def readCSV(fileName: String, recordType: String): List[SearchKeys] = {

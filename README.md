@@ -17,9 +17,9 @@ If you want to specify a particular period, use the format below.
 
 | method | endpoint                                         | example                               |
 |--------|--------------------------------------------------|---------------------------------------|
-| GET    | /v1/periods/${period}/companies/${companyNumber} | /v1/periods/201707/companies/AB123456 |
-| GET    | /v1/periods/${period}/vats/${vatRef}             | /v1/periods/201707/vats/123456789012  |
-| GET    | /v1/periods/${period}/payes/${payeRef}           | /v1/periods/201707/payes/12345        |
+| GET    | /v1/periods/${period}/companies/${companyNumber} | /v1/periods/201706/companies/AB123456 |
+| GET    | /v1/periods/${period}/vats/${vatRef}             | /v1/periods/201706/vats/123456789012  |
+| GET    | /v1/periods/${period}/payes/${payeRef}           | /v1/periods/201706/payes/12345        |
 
 ## Environment Setup
 
@@ -98,13 +98,15 @@ stop-hbase.sh
 
 ### Inserting CompanyHouse data into HBase
 
-Firstly, start HBase and open the shell, then create the namespace/table for the CompanyHouse data:
+Firstly, start HBase and open the shell, then create the namespace/table for all data:
 
 ```shell
 start-hbase.sh
 hbase shell
 create_namespace 'sbr_local_db'
 create 'sbr_local_db:ch', 'd'
+create 'sbr_local_db:vat', 'd'
+create 'sbr_local_db:paye', 'd'
 ```
 
 Create some folders for use by the [sbr-hbase-connector](https://github.com/ONSdigital/sbr-hbase-connector) and change its permissions:
@@ -117,13 +119,15 @@ sudo chmod 777 user/<username>/hbase-staging
 
 Download the CompanyHouse data from [here](http://download.companieshouse.gov.uk/en_output.html).
 
-In the same directory as the CompanyHouse CSV file and the `sbr-hbase-connector` fat .jar, run the following command:
+In the same directory as the CompanyHouse CSV file, the VAT/PAYE fake csv data (can be found in `conf/sample/...`) and the `sbr-hbase-connector-1.0-SNAPSHOT-distribution.jar`, run the following commands:
 
 ```shell
-java -DREFERENCE_PERIOD="201706" -cp sbr-hbase-connector-1.0-SNAPSHOT-distribution.jar uk.gov.ons.sbr.data.hbase.load.BulkLoader ./path/to/CompanyHouseCsv.csv ch_2017-07-01.hfile CH
+java -cp sbr-hbase-connector-1.0-SNAPSHOT-distribution.jar uk.gov.ons.sbr.data.hbase.load.BulkLoader CH 201706 BasicCompanyDataAsOneFile-2017-07-01BasicCompanyDataAsOneFile-2017-07-01.csv
+java -cp sbr-hbase-connector-1.0-SNAPSHOT-distribution.jar uk.gov.ons.sbr.data.hbase.load.BulkLoader VAT 201706 vat_data.csv
+java -cp sbr-hbase-connector-1.0-SNAPSHOT-distribution.jar uk.gov.ons.sbr.data.hbase.load.BulkLoader PAYE 201706 paye_data.csv
 ```
 
-This will take ~10 minutes, a few errors will appear relating to invalid characters.
+The command for CompanyHouse will take ~10 minutes, a few errors will appear relating to invalid characters.
 
 Test it works:
 

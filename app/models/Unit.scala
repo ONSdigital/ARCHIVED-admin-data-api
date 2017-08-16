@@ -3,7 +3,7 @@ package models
 import java.util
 
 import play.api.libs.json.{ JsValue, Json, Writes }
-import uk.gov.ons.sbr.data.domain.CompanyRegistration
+import uk.gov.ons.sbr.data.domain.{ CompanyRegistration, StatisticalUnit }
 import utils.Utilities._
 
 import scala.collection.JavaConversions._
@@ -40,7 +40,7 @@ object Unit {
 
   def toJson(u: Unit): JsValue = Json.toJson(u)
 
-  def mapToUnitList(unit: CompanyRegistration): List[Unit] = {
+  def mapToUnitList(unit: StatisticalUnit): List[Unit] = {
     List(
       Unit(
         unit.getKey,
