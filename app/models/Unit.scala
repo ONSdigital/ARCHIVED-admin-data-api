@@ -2,8 +2,9 @@ package models
 
 import java.util
 
-import play.api.libs.json.{ JsValue, Json, Writes }
+import play.api.libs.json.{JsValue, Json, Writes}
 import uk.gov.ons.sbr.data.domain.CompanyRegistration
+import utils.Utilities._
 
 import scala.collection.JavaConversions._
 
@@ -29,6 +30,12 @@ object Unit {
         "vars" -> Json.toJson(u.vars.toMap)
       )
     }
+  }
+
+  def validateUnitId(id: String, unitType: String): Boolean = unitType match {
+    case "company" => checkRegex(id, "[A-Z]{2}\\d{6}", "[0-9]{8}")
+    case "paye" => checkRegex(id, "[0-9]{5,13}")
+    case "vat" => checkRegex(id, "[0-9]{12}")
   }
 
   def toJson(u: Unit): JsValue = Json.toJson(u)

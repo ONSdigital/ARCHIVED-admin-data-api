@@ -5,9 +5,12 @@ import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.Config
 import models.{ SearchKeys, Unit }
+import org.apache.hadoop.util.ToolRunner
 import play.api.Logger
 import uk.gov.ons.sbr.data.controller.AdminDataController
-import uk.gov.ons.sbr.data.hbase.HBaseConnector
+import uk.gov.ons.sbr.data.domain.UnitType
+import uk.gov.ons.sbr.data.hbase.load.BulkLoader
+import uk.gov.ons.sbr.data.hbase.{ HBaseConnector, HBaseTest }
 import utils.Utilities._
 
 import scala.util.Try
@@ -17,7 +20,18 @@ import scala.util.Try
  * When the application starts, this will be accessible in the controllers through the use of @Inject()
  */
 @Singleton
-class HBaseData @Inject() (implicit val config: Config) extends DataAccess {
+class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends DataAccess {
+
+  if (loadData) loadHBaseData()
+
+  def loadHBaseData(): scala.Unit = {
+    Logger.info("Loading HBase data...")
+//    HBaseTest.init()
+//    val bulkLoader = new BulkLoader()
+//    val unitType = UnitType.COMPANY_REGISTRATION.toString
+//    val args = Array[String](unitType, "201701", "conf/sample/company_house_data.csv")
+//    ToolRunner.run(HBaseConnector.getInstance().getConfiguration(), bulkLoader, args)
+  }
 
   def getRecordById(id: String, recordType: String): Try[List[SearchKeys]] = recordType match {
     case "company" => Try(getCompanyFromHbase(id))

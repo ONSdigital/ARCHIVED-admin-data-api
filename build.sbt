@@ -9,7 +9,7 @@ lazy val Versions = new {
   val version = "0.1"
   val scapegoatVersion = "1.1.0"
   val util = "0.27.8"
-  val hbase = "1.3.1"
+  val hbase = "1.3.1" // was 1.3.1
   val hadoop = "2.8.1"
 }
 
@@ -86,13 +86,14 @@ lazy val api = (project in file("."))
       "org.apache.hive"              %     "hive-jdbc"           %    "1.2.1",
       "org.apache.spark"             %     "spark-hive_2.11"     %    "2.1.0",
       "mysql"                        %     "mysql-connector-java" %   "5.1.35",
-      "org.apache.hbase"             %     "hbase-client"        %    Versions.hbase,
-      "org.apache.hbase"             %     "hbase-common"        %    Versions.hbase,
-      "org.apache.hbase"             %     "hbase-common"        %    Versions.hbase classifier "tests",
+      "org.apache.hbase" % "hbase" % Versions.hbase pomOnly(),
+      "org.apache.hbase"             %     "hbase-client"        %    Versions.hbase, // y
+      "org.apache.hbase"             %     "hbase-common"        %    Versions.hbase, // y
+      //"org.apache.hbase"             %     "hbase-common"        %    Versions.hbase classifier "tests",
       "org.slf4j"                    %     "slf4j-api"           %    "1.7.25",
-      "org.apache.hbase"             %     "hbase-testing-util"  %    Versions.hbase % "test",
-      "org.apache.hbase"             %     "hbase-server"        %    Versions.hbase,
-      "org.apache.hbase"             %     "hbase-server"        %    Versions.hbase classifier "tests"
+      "org.apache.hbase"             %     "hbase-testing-util"  %    Versions.hbase % "test", // y
+      "org.apache.hbase"             %     "hbase-server"        %    Versions.hbase
+      //"org.apache.hbase"             %     "hbase-server"        %    Versions.hbase classifier "tests"
 //      "org.apache.hadoop" % "hadoop-minicluster" % Versions.hadoop,
 //      "org.apache.hadoop" % "hadoop-mapreduce-client-jobclient" % Versions.hadoop classifier "tests",
 //      "org.apache.hadoop" % "hadoop-hdfs" % Versions.hadoop,

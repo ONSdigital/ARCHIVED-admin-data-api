@@ -89,10 +89,10 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
   @ApiResponses(Array(
     new ApiResponse(code = 200, responseContainer = "JSONObject", message = "Success -> Record found for id."),
     new ApiResponse(code = 404, responseContainer = "JSONObject", message = "Client Side Error -> Id not found."),
-    new ApiResponse(code = 422, responseContainer = "JSONObject", message = "Client Side Error -> Wrong companyNumber format."),
+    new ApiResponse(code = 422, responseContainer = "JSONObject", message = "Client Side Error -> Wrong companyNumber/period format."),
     new ApiResponse(code = 500, responseContainer = "JSONObject", message = "Server Side Error -> Request could not be completed.")
   ))
-  def getCompanyByIdForPeriod(@ApiParam(value = "A valid companyNumber, [A-Z]{2}d{6} or [0-9]{8}", example = "AB123456", required = true) companyNumber: String, period: String): Action[AnyContent] = {
+  def getCompanyByIdForPeriod(@ApiParam(value = "A valid companyNumber, [A-Z]{2}d{6} or [0-9]{8}", example = "AB123456", required = true) companyNumber: String, @ApiParam(value = "A valid period, YYYYMM", example = "201707", required = true) period: String): Action[AnyContent] = {
     Action.async { implicit request =>
       getRefByIdForPeriod(companyNumber, "company", period)
     }
@@ -102,7 +102,7 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
     val src: String = config.getString("source")
     Logger.info(s"Searching for $refType with id: ${id} in source: ${src}")
     val res = id match {
-      case id if validateId(id, refType) => data.getRecordById(id, refType) match {
+      case id if Unit.validateUnitId(id, refType) => data.getRecordById(id, refType) match {
         case Success(results) => results match {
           case Nil => NotFound(errAsJson(404, "Not Found", s"Could not find value ${id}")).future
           case x => x.head match {
@@ -123,7 +123,7 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
     val src: String = config.getString("source")
     Logger.info(s"Searching for $refType with id: ${id} in source: ${src}")
     val res = id match {
-      case id if validateId(id, refType) => Try(periodToYearMonth(period)) match {
+      case id if Unit.validateUnitId(id, refType) => Try(periodToYearMonth(period)) match {
         case Success(validPeriod) => data.getRecordByIdForPeriod(id, validPeriod, refType) match {
           case Success(results) => results match {
             case Nil => NotFound(errAsJson(404, "Not Found", s"Could not find value ${id}")).future
@@ -141,11 +141,5 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
       case _ => UnprocessableEntity(errAsJson(422, "Unprocessable Entity", "Please ensure the vat/ch/paye reference is the correct length/format")).future
     }
     res
-  }
-
-  def validateId(id: String, refType: String): Boolean = refType match {
-    case "company" => checkRegex(id, "[A-Z]{2}\\d{6}", "[0-9]{8}")
-    case "paye" => checkRegex(id, "[0-9]{5,13}")
-    case "vat" => checkRegex(id, "[0-9]{12}")
   }
 }
