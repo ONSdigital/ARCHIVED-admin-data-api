@@ -121,7 +121,7 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
 
   def getRefByIdForPeriod(id: String, refType: String, period: String): Future[Result] = {
     val src: String = config.getString("source")
-    Logger.info(s"Searching for $refType with id: ${id} in source: ${src}")
+    Logger.info(s"Searching for $refType with id: ${id}, for period: ${period} in source: ${src}")
     val res = id match {
       case id if Unit.validateUnitId(id, refType) => Try(periodToYearMonth(period)) match {
         case Success(validPeriod) => data.getRecordByIdForPeriod(id, validPeriod, refType) match {

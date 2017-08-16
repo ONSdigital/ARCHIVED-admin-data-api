@@ -2,7 +2,7 @@ package models
 
 import java.util
 
-import play.api.libs.json.{JsValue, Json, Writes}
+import play.api.libs.json.{ JsValue, Json, Writes }
 import uk.gov.ons.sbr.data.domain.CompanyRegistration
 import utils.Utilities._
 

@@ -38,7 +38,7 @@ object Company {
   implicit val writer = new Writes[Company] {
     def writes(c: Company): JsValue = {
       val sicText = List(c.SICCodeSicText1, c.SICCodeSicText2, c.SICCodeSicText3, c.SICCodeSicText4).filter(
-        _ != "\"\""
+        _ != ""
       )
       // We use a similar JSON format to the one used by CompanyHouse, found here: /models/ch.json
       Json.obj(

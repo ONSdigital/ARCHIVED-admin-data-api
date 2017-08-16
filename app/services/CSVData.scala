@@ -22,7 +22,7 @@ class CSVData @Inject() (implicit val config: Config) extends DataAccess {
 
   // TODO: remove asInstanceOf[], bad practice
   def getRecordById(id: String, recordType: String): Try[List[SearchKeys]] = recordType match {
-    case "company" => Try(ch.filter(_.asInstanceOf[Company].CompanyNumber == s""""$id""""))
+    case "company" => Try(ch.filter(_.asInstanceOf[Company].CompanyNumber == s"$id"))
     case "vat" => Try(vat.filter(_.asInstanceOf[VAT].vatref == s"$id"))
     case "paye" => Try(paye.filter(_.asInstanceOf[PAYE].payeref == s"$id"))
   }

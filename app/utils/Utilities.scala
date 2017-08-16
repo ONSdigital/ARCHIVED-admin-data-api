@@ -73,7 +73,12 @@ object Utilities {
     Await.result(Future.sequence(res), 2 minutes)
   }
 
-  def splitCsvLine(line: String): List[String] = line.split(",").toList // .map(v => unquote(v.trim))
+  def splitCsvLine(line: String): List[String] = {
+    line.split(",").toList.map(
+      // Remove leading and trailing double qoutes (only present on the CH csv)
+      s => s.replaceAll("^\"|\"$", "")
+    )
+  }
 
   def optionConverter[T](o: Optional[T]): Option[T] = if (o.isPresent) Some(o.get) else None
 
