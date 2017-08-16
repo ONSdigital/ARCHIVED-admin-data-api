@@ -36,7 +36,7 @@ class HiveData @Inject() (implicit val config: Config) extends DataAccess {
     Class.forName("org.apache.hive.jdbc.HiveDriver")
     Logger.trace(s"Creating JDBC connection with url [${url}]")
     Try(DriverManager.getConnection(url, username, password)).recoverWith {
-      case e: Exception => Failure(new Exception("Unable to create JDBC connection to Hive"))
+      case _: Exception => Failure(new Exception("Unable to create JDBC connection to Hive"))
     }
   }
 
