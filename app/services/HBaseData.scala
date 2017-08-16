@@ -22,6 +22,9 @@ import scala.util.Try
 @Singleton
 class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends DataAccess {
 
+  HBaseConnector.getInstance().connect()
+  private val adminController = new AdminDataController()
+
   if (loadData) loadHBaseData()
 
   def loadHBaseData(): scala.Unit = {
@@ -33,33 +36,31 @@ class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends Da
     ToolRunner.run(HBaseConnector.getInstance().getConfiguration(), bulkLoader, args)
   }
 
-  def getRecordById(id: String, recordType: String): Try[List[SearchKeys]] = recordType match {
-    case "company" => Try(getCompanyFromHbase(id))
-    case "vat" => Try(List())
-    case "paye" => Try(List())
-  }
+  def getRecordById(id: String, recordType: String): Try[List[SearchKeys]] = Try(getRecordFromHbase(id, recordType))
 
-  def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): Try[List[SearchKeys]] = recordType match {
-    case "company" => Try(getCompanyFromHbaseForPeriod(id, period))
-    case "vat" => Try(List())
-    case "paye" => Try(List())
-  }
+  def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): Try[List[SearchKeys]] = Try(
+    getRecordFromHbaseForPeriod(id, period, recordType)
+  )
 
-  def getCompanyFromHbase(companyNumber: String): List[Unit] = {
-    HBaseConnector.getInstance().connect()
-    val adminController = new AdminDataController()
-    val company = adminController.getCompanyRegistration(companyNumber)
-    optionConverter(company) match {
+  def getRecordFromHbase(id: String, recordType: String): List[Unit] = {
+    val record = recordType match {
+      case "company" => adminController.getCompanyRegistration(id)
+      case "vat" => adminController.getVATReturn(id)
+      case "paye" => adminController.getPAYEReturn(id)
+    }
+    optionConverter(record) match {
       case Some(c) => Unit.mapToUnitList(c)
       case None => List()
     }
   }
 
-  def getCompanyFromHbaseForPeriod(companyNumber: String, period: YearMonth): List[Unit] = {
-    HBaseConnector.getInstance().connect()
-    val adminController = new AdminDataController()
-    val company = adminController.getCompanyRegistrationForReferencePeriod(period, companyNumber)
-    optionConverter(company) match {
+  def getRecordFromHbaseForPeriod(id: String, period: YearMonth, recordType: String): List[Unit] = {
+    val record = recordType match {
+      case "company" => adminController.getCompanyRegistrationForReferencePeriod(period, id)
+      case "vat" => adminController.getVATReturnForReferencePeriod(period, id)
+      case "paye" => adminController.getPAYEReturnForReferencePeriod(period, id)
+    }
+    optionConverter(record) match {
       case Some(c) => Unit.mapToUnitList(c)
       case None => List()
     }

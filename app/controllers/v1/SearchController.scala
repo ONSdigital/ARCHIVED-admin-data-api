@@ -98,6 +98,44 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
     }
   }
 
+  @ApiOperation(
+    value = "JSON of the matching VAT record",
+    notes = "The company is matched on VAT reference",
+    responseContainer = "JSONObject",
+    code = 200,
+    httpMethod = "GET"
+  )
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, responseContainer = "JSONObject", message = "Success -> Record found for id."),
+    new ApiResponse(code = 404, responseContainer = "JSONObject", message = "Client Side Error -> Id not found."),
+    new ApiResponse(code = 422, responseContainer = "JSONObject", message = "Client Side Error -> Wrong vatRef/period format."),
+    new ApiResponse(code = 500, responseContainer = "JSONObject", message = "Server Side Error -> Request could not be completed.")
+  ))
+  def getVatByIdForPeriod(@ApiParam(value = "A valid vatRef, [0-9]{12}", example = "123456789012", required = true) vatRef: String, @ApiParam(value = "A valid period, YYYYMM", example = "201707", required = true) period: String): Action[AnyContent] = {
+    Action.async { implicit request =>
+      getRefByIdForPeriod(vatRef, "vat", period)
+    }
+  }
+
+  @ApiOperation(
+    value = "JSON of the matching PAYE record",
+    notes = "The company is matched on PAYE reference",
+    responseContainer = "JSONObject",
+    code = 200,
+    httpMethod = "GET"
+  )
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, responseContainer = "JSONObject", message = "Success -> Record found for id."),
+    new ApiResponse(code = 404, responseContainer = "JSONObject", message = "Client Side Error -> Id not found."),
+    new ApiResponse(code = 422, responseContainer = "JSONObject", message = "Client Side Error -> Wrong payeRef/period format."),
+    new ApiResponse(code = 500, responseContainer = "JSONObject", message = "Server Side Error -> Request could not be completed.")
+  ))
+  def getPayeByIdForPeriod(@ApiParam(value = "A valid payeRef, [0-9]{5,13}", example = "12345", required = true) payeRef: String, @ApiParam(value = "A valid period, YYYYMM", example = "201707", required = true) period: String): Action[AnyContent] = {
+    Action.async { implicit request =>
+      getRefByIdForPeriod(payeRef, "paye", period)
+    }
+  }
+
   def getRefById(id: String, refType: String): Future[Result] = {
     val src: String = config.getString("source")
     Logger.info(s"Searching for $refType with id: ${id} in source: ${src}")
