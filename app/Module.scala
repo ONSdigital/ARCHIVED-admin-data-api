@@ -1,10 +1,12 @@
 import com.google.inject.AbstractModule
 import java.time.Clock
 
+import com.google.inject.name.Names
 import com.typesafe.config.{ Config, ConfigFactory }
 import play.api.{ Configuration, Environment, Logger }
 import services._
 import config.SbrConfigManager
+import services._
 
 /**
  * This class is a Guice module that tells Guice how to bind several
@@ -21,10 +23,13 @@ class Module(environment: Environment, configuration: Configuration) extends Abs
   override def configure() = {
     val config = SbrConfigManager.envConf(ConfigFactory.load())
     bind(classOf[Config]).toInstance(config)
-    // Bind the CHData service, make it accessible through @Inject()
-    bind(classOf[CHData]).asEagerSingleton()
-    // Use the system clock as the default implementation of Clock
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone)
-  }
 
+    config.getString("source") match {
+      case "csv" => bind(classOf[DataAccess]).to(classOf[CSVData])
+      case "hbaseLocal" => bind(classOf[DataAccess]).toInstance(new HBaseData(false, config))
+      case "hbaseInMemory" => bind(classOf[DataAccess]).toInstance(new HBaseData(true, config))
+      case "hiveLocal" => bind(classOf[DataAccess]).to(classOf[HiveData])
+    }
+  }
 }

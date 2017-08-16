@@ -38,7 +38,7 @@ object Company {
   implicit val writer = new Writes[Company] {
     def writes(c: Company): JsValue = {
       val sicText = List(c.SICCodeSicText1, c.SICCodeSicText2, c.SICCodeSicText3, c.SICCodeSicText4).filter(
-        _ != "\"\""
+        _ != ""
       )
       // We use a similar JSON format to the one used by CompanyHouse, found here: /models/ch.json
       Json.obj(
@@ -102,6 +102,33 @@ object Company {
         x.getString(CompanyConstants.sicCodeSicText4)
       )
     }).toList
+  }
+
+  def stringsToCaseClass(companyRecord: List[String]): Company = {
+    Company(
+      companyRecord(CompanyConstantsCSV.companyName),
+      companyRecord(CompanyConstantsCSV.companyNumber),
+      companyRecord(CompanyConstantsCSV.companyCategory),
+      companyRecord(CompanyConstantsCSV.companyStatus),
+      companyRecord(CompanyConstantsCSV.countryOfOrigin),
+      companyRecord(CompanyConstantsCSV.incorporationDate),
+      companyRecord(CompanyConstantsCSV.addressLine1),
+      companyRecord(CompanyConstantsCSV.addressLine2),
+      companyRecord(CompanyConstantsCSV.postTown),
+      companyRecord(CompanyConstantsCSV.county),
+      companyRecord(CompanyConstantsCSV.postcode),
+      companyRecord(CompanyConstantsCSV.accountRefDay),
+      companyRecord(CompanyConstantsCSV.accountRefMonth),
+      companyRecord(CompanyConstantsCSV.accountNextDueDate),
+      companyRecord(CompanyConstantsCSV.accountLastMadeUpDate),
+      companyRecord(CompanyConstantsCSV.accountCategory),
+      companyRecord(CompanyConstantsCSV.returnsNextDueDate),
+      companyRecord(CompanyConstantsCSV.returnsLastMadeUpDate),
+      companyRecord(CompanyConstantsCSV.sicCodeSicText1),
+      companyRecord(CompanyConstantsCSV.sicCodeSicText2),
+      companyRecord(CompanyConstantsCSV.sicCodeSicText3),
+      companyRecord(CompanyConstantsCSV.sicCodeSicText4)
+    )
   }
 }
 

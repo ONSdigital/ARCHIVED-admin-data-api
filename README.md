@@ -5,9 +5,21 @@ An API for use by sbr-api for accessing CompanyHouse/VAT/PAYE data
 
 ## API Endpoints
 
-| method | endpoint                     | example                  |
-|--------|------------------------------|--------------------------|
-| GET    | /v1/company/${companyNumber} | GET /v1/company/AB123456 |
+If you do not specify a period, the record for the most recent period will be returned.
+
+| method | endpoint                       | example                  |
+|--------|--------------------------------|--------------------------|
+| GET    | /v1/companies/${companyNumber} | GET /v1/company/AB123456 |
+| GET    | /v1/vats/${vatReference}       | GET /v1/vat/123456789012 |
+| GET    | /v1/payes/${payeReference}     | GET /v1/paye/12345678    |
+
+If you want to specify a particular period, use the format below.
+
+| method | endpoint                                         | example                               |
+|--------|--------------------------------------------------|---------------------------------------|
+| GET    | /v1/periods/${period}/companies/${companyNumber} | /v1/periods/201707/companies/AB123456 |
+| GET    | /v1/periods/${period}/vats/${vatRef}             | /v1/periods/201707/vats/123456789012  |
+| GET    | /v1/periods/${period}/payes/${payeRef}           | /v1/periods/201707/payes/12345        |
 
 ## Environment Setup
 
@@ -25,17 +37,17 @@ With the minimal environment setup described above (just Java 8 and SBT), the sb
 To run the `sbr-ch-data-api`, run the following:
 
 ``` shell
-sbt api/run -Dsource=csv
+sbt "api/run -Dsource=csv"
 ```
 
 Swap the `csv` argument with any of the values in the table below:
 
 | -Dsource value | Data Access                                                                                     |
 |----------------|-------------------------------------------------------------------------------------------------|
-| csv            | Local [CSV file](./conf/sample/company_house_data.csv) (first 10,000 rows of CompanyHouse data) |
+| csv            | Local CSV files `./conf/sample/...` (Real CompanyHouse data, test VAT/PAYE data)                |
 | hiveLocal      | Hive which runs inside the Hortonworks VM (setup described above)                               |
-| hbaseLocal     | A local hbase installation (not in a VM)                                                        |
-| hiveCloudera   | Hive which runs on Cloudera (requires Kerboros setup etc.)                                      |
+| hbaseLocal     | A local HBase installation (not in a VM)                                                        |
+| hbaseInMemory  | A local HBase installation + trigger of local CSV data load                                     |
 
 ## Hortonworks Sandbox VM Setup
 
