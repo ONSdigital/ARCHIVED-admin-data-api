@@ -140,7 +140,7 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
     val src: String = config.getString("source")
     Logger.info(s"Searching for $refType with id: ${id} in source: ${src}")
     val res = id match {
-      case id if Unit.validateUnitId(id, refType) => data.getRecordById(id, refType) match {
+      case id if Unit.validateUnitId(id, refType) => Try(data.getRecordById(id, refType)) match {
         case Success(results) => results match {
           case Nil => NotFound(errAsJson(404, "Not Found", s"Could not find value ${id}")).future
           case x => x.head match {
@@ -162,7 +162,7 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
     Logger.info(s"Searching for $refType with id: ${id}, for period: ${period} in source: ${src}")
     val res = id match {
       case id if Unit.validateUnitId(id, refType) => Try(periodToYearMonth(period)) match {
-        case Success(validPeriod) => data.getRecordByIdForPeriod(id, validPeriod, refType) match {
+        case Success(validPeriod) => Try(data.getRecordByIdForPeriod(id, validPeriod, refType)) match {
           case Success(results) => results match {
             case Nil => NotFound(errAsJson(404, "Not Found", s"Could not find value ${id}")).future
             case x => x.head match {

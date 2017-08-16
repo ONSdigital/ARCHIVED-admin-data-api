@@ -36,11 +36,10 @@ class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends Da
     ToolRunner.run(HBaseConnector.getInstance().getConfiguration(), bulkLoader, args)
   }
 
-  def getRecordById(id: String, recordType: String): Try[List[SearchKeys]] = Try(getRecordFromHbase(id, recordType))
+  def getRecordById(id: String, recordType: String): List[SearchKeys] = getRecordFromHbase(id, recordType)
 
-  def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): Try[List[SearchKeys]] = Try(
+  def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): List[SearchKeys] =
     getRecordFromHbaseForPeriod(id, period, recordType)
-  )
 
   def getRecordFromHbase(id: String, recordType: String): List[Unit] = {
     val record = recordType match {
