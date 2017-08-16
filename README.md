@@ -46,8 +46,8 @@ Swap the `csv` argument with any of the values in the table below:
 |----------------|-------------------------------------------------------------------------------------------------|
 | csv            | Local CSV files `./conf/sample/...` (Real CompanyHouse data, test VAT/PAYE data)                |
 | hiveLocal      | Hive which runs inside the Hortonworks VM (setup described above)                               |
-| hbaseLocal     | A local hbase installation (not in a VM)                                                        |
-| hiveCloudera   | Hive which runs on Cloudera (requires Kerboros setup etc.)                                      |
+| hbaseLocal     | A local HBase installation (not in a VM)                                                        |
+| hbaseInMemory  | A local HBase installation + trigger of local CSV data load                                     |
 
 ## Hortonworks Sandbox VM Setup
 
