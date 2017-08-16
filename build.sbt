@@ -86,27 +86,13 @@ lazy val api = (project in file("."))
       "org.apache.hive"              %     "hive-jdbc"           %    "1.2.1",
       "org.apache.spark"             %     "spark-hive_2.11"     %    "2.1.0",
       "mysql"                        %     "mysql-connector-java" %   "5.1.35",
-      "org.apache.hbase" % "hbase" % Versions.hbase pomOnly(),
-      "org.apache.hbase"             %     "hbase-client"        %    Versions.hbase, // y
-      "org.apache.hbase"             %     "hbase-common"        %    Versions.hbase, // y
-      //"org.apache.hbase"             %     "hbase-common"        %    Versions.hbase classifier "tests",
       "org.slf4j"                    %     "slf4j-api"           %    "1.7.25",
-      "org.apache.hbase"             %     "hbase-testing-util"  %    Versions.hbase % "test", // y
-      "org.apache.hbase"             %     "hbase-server"        %    Versions.hbase
-      //"org.apache.hbase"             %     "hbase-server"        %    Versions.hbase classifier "tests"
-//      "org.apache.hadoop" % "hadoop-minicluster" % Versions.hadoop,
-//      "org.apache.hadoop" % "hadoop-mapreduce-client-jobclient" % Versions.hadoop classifier "tests",
-//      "org.apache.hadoop" % "hadoop-hdfs" % Versions.hadoop,
-//      "org.apache.hadoop" % "hadoop-hdfs" % Versions.hadoop classifier "tests",
-////      "org.apache.hbase" % "hbase-hadoop-compat" % Versions.hadoop,
-////      "org.apache.hbase" % "hbase-hadoop-compat" % Versions.hadoop classifier "tests",
-////      "org.apache.hbase" % "hbase-hadoop2-compat" % Versions.hadoop,
-////      "org.apache.hbase" % "hbase-hadoop2-compat" % Versions.hadoop classifier "tests",
-//      "org.apache.hadoop" % "hadoop-common" % Versions.hadoop,
-//      "org.apache.hadoop" % "hadoop-common" % Versions.hadoop classifier "tests",
-//      "org.apache.hadoop" % "hadoop-annotations" % Versions.hadoop
-//      //"org.apache.hadoop" % "hadoop-hdfs" % "2.1.1",
-//      //"org.apache.hadoop" % "hadoop-hdfs" % "2.1.1" classifier "tests"
+      "org.apache.hbase"             %     "hbase"               %    Versions.hbase pomOnly(),
+      "org.apache.hbase"             %     "hbase-client"        %    Versions.hbase,
+      "org.apache.hbase"             %     "hbase-common"        %    Versions.hbase,
+      "org.apache.hbase"             %     "hbase-testing-util"  %    Versions.hbase % Test,
+      "org.apache.hbase"             %     "hbase-server"        %    Versions.hbase,
+      "org.apache.hbase"             %     "hbase-server"        %    Versions.hbase classifier "tests"
     ),
     assemblyJarName in assembly := "sbr-admin-data-api.jar",
     assemblyMergeStrategy in assembly := {

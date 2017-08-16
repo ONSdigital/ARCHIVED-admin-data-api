@@ -26,11 +26,11 @@ class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends Da
 
   def loadHBaseData(): scala.Unit = {
     Logger.info("Loading HBase data...")
-    //    HBaseTest.init()
-    //    val bulkLoader = new BulkLoader()
-    //    val unitType = UnitType.COMPANY_REGISTRATION.toString
-    //    val args = Array[String](unitType, "201701", "conf/sample/company_house_data.csv")
-    //    ToolRunner.run(HBaseConnector.getInstance().getConfiguration(), bulkLoader, args)
+    HBaseTest.init()
+    val bulkLoader = new BulkLoader()
+    val unitType = UnitType.COMPANY_REGISTRATION.toString
+    val args = Array[String](unitType, "201701", "conf/sample/company_house_data.csv")
+    ToolRunner.run(HBaseConnector.getInstance().getConfiguration(), bulkLoader, args)
   }
 
   def getRecordById(id: String, recordType: String): Try[List[SearchKeys]] = recordType match {
