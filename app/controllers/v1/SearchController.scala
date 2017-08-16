@@ -150,9 +150,9 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
             case (u: Unit) => Ok(Unit.toJson(u)).future
           }
         }
-        case Failure(e) => InternalServerError(errAsJson(500, "Internal Server Error", s"An error has occurred, please contact the server administrator")).future
+        case Failure(e) => InternalServerError(errAsJson(INTERNAL_SERVER_ERROR, "Internal Server Error", s"An error has occurred, please contact the server administrator")).future
       }
-      case _ => UnprocessableEntity(errAsJson(422, "Unprocessable Entity", "Please ensure the vat/ch/paye reference is the correct length/format")).future
+      case _ => UnprocessableEntity(errAsJson(UNPROCESSABLE_ENTITY, "Unprocessable Entity", "Please ensure the vat/ch/paye reference is the correct length/format")).future
     }
     res
   }
@@ -164,7 +164,7 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
       case id if Unit.validateUnitId(id, refType) => Try(periodToYearMonth(period)) match {
         case Success(validPeriod) => Try(data.getRecordByIdForPeriod(id, validPeriod, refType)) match {
           case Success(results) => results match {
-            case Nil => NotFound(errAsJson(404, "Not Found", s"Could not find value ${id}")).future
+            case Nil => NotFound(errAsJson(NOT_FOUND, "Not Found", s"Could not find value ${id}")).future
             case x => x.head match {
               case (c: Company) => Ok(Company.toJson(c)).future
               case (p: PAYE) => Ok(PAYE.toJson(p)).future
@@ -172,11 +172,11 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
               case (u: Unit) => Ok(Unit.toJson(u)).future
             }
           }
-          case Failure(e) => InternalServerError(errAsJson(500, "Internal Server Error", s"An error has occurred, please contact the server administrator")).future
+          case Failure(e) => InternalServerError(errAsJson(INTERNAL_SERVER_ERROR, "Internal Server Error", s"An error has occurred, please contact the server administrator")).future
         }
-        case Failure(e: DateTimeException) => UnprocessableEntity(errAsJson(422, "Unprocessable Entity", "Please ensure the period is in the following format: YYYYMM")).future
+        case Failure(e: DateTimeException) => UnprocessableEntity(errAsJson(UNPROCESSABLE_ENTITY, "Unprocessable Entity", "Please ensure the period is in the following format: YYYYMM")).future
       }
-      case _ => UnprocessableEntity(errAsJson(422, "Unprocessable Entity", "Please ensure the vat/ch/paye reference is the correct length/format")).future
+      case _ => UnprocessableEntity(errAsJson(UNPROCESSABLE_ENTITY, "Unprocessable Entity", "Please ensure the vat/ch/paye reference is the correct length/format")).future
     }
     res
   }
