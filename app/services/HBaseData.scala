@@ -10,10 +10,8 @@ import play.api.Logger
 import uk.gov.ons.sbr.data.controller.AdminDataController
 import uk.gov.ons.sbr.data.domain.UnitType
 import uk.gov.ons.sbr.data.hbase.load.BulkLoader
-import uk.gov.ons.sbr.data.hbase.{ HBaseConnector, HBaseTest }
+import uk.gov.ons.sbr.data.hbase.HBaseConnector
 import utils.Utilities._
-
-import scala.util.Try
 
 /**
  * Created by coolit on 07/08/2017.
@@ -28,12 +26,16 @@ class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends Da
   if (loadData) loadHBaseData()
 
   def loadHBaseData(): scala.Unit = {
-    Logger.info("Loading HBase data...")
-    HBaseTest.init()
+    Logger.info("Loading local CSVs into In-Memory HBase...")
     val bulkLoader = new BulkLoader()
-    val unitType = UnitType.COMPANY_REGISTRATION.toString
-    val args = Array[String](unitType, "201701", "conf/sample/company_house_data.csv")
-    ToolRunner.run(HBaseConnector.getInstance().getConfiguration(), bulkLoader, args)
+    List(
+      List[String](UnitType.COMPANY_REGISTRATION.toString, "201706", "conf/sample/sbr-2500-ent-ch-data.csv"),
+      List[String](UnitType.VAT.toString, "201706", "conf/sample/vat_data.csv"),
+      List[String](UnitType.PAYE.toString, "201706", "conf/sample/paye_data.csv")
+    ).foreach(arg => {
+        Logger.info(s"Loading CSV [${arg(2)}] into HBase for period [${arg(1)}] and type [${arg(0)}]...")
+        ToolRunner.run(HBaseConnector.getInstance().getConfiguration(), bulkLoader, arg.toArray)
+      })
   }
 
   def getRecordById(id: String, recordType: String): List[SearchKeys] = getRecordFromHbase(id, recordType)

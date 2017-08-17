@@ -37,7 +37,7 @@ With the minimal environment setup described above (just Java 8 and SBT), the sb
 To run the `sbr-ch-data-api`, run the following:
 
 ``` shell
-sbt "api/run -Dsource=csv"
+sbt "api/run -Dsource=hbaseInMemory -Dsbr.hbase.inmemory=true"
 ```
 
 Swap the `csv` argument with any of the values in the table below:
@@ -47,7 +47,7 @@ Swap the `csv` argument with any of the values in the table below:
 | csv            | Local CSV files `./conf/sample/...` (Real CompanyHouse data, test VAT/PAYE data)                |
 | hiveLocal      | Hive which runs inside the Hortonworks VM (setup described above)                               |
 | hbaseLocal     | A local HBase installation (not in a VM)                                                        |
-| hbaseInMemory  | A local HBase installation + trigger of local CSV data load                                     |
+| hbaseInMemory  | In memory HBase tables with the CompanyHouse/VAT/PAYE CSVs loaded in                            |
 
 ## Hortonworks Sandbox VM Setup
 
