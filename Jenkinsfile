@@ -89,12 +89,12 @@ pipeline {
                     env.NODE_STAGE = "Bundle"
                 }
                 colourText("info", "Bundling....")
-                //dir('conf') {
-                //    git(url: "$GITLAB_URL/StatBusReg/sbr-api.git", credentialsId: 'sbr-gitlab-id', branch: 'feature/env-key')
-                //}
-                // packageApp('dev')
-                // packageApp('test')
-                // stash name: "zip"
+                dir('conf') {
+                    git(url: "$GITLAB_URL/StatBusReg/sbr-api.git", credentialsId: 'sbr-gitlab-id', branch: 'feature/env-key')
+                }
+                packageApp('dev')
+                packageApp('test')
+                stash name: "zip"
             }
         }
         stage ('Approve') {
@@ -206,6 +206,6 @@ pipeline {
 def deploy () {
     echo "Deploying Api app to ${env.DEPLOY_NAME}"
     withCredentials([string(credentialsId: "sbr-api-dev-secret-key", variable: 'APPLICATION_SECRET')]) {
-        deployToCloudFoundry("cloud-foundry-sbr-${env.DEPLOY_NAME}-user", 'sbr', "${env.DEPLOY_NAME}", "${env.DEPLOY_NAME}-sbr-api", "${env.DEPLOY_NAME}-ons-sbr-api.zip", "conf/${env.DEPLOY_NAME}/manifest.yml")
+        deployToCloudFoundry("cloud-foundry-sbr-${env.DEPLOY_NAME}-user", 'sbr', "${env.DEPLOY_NAME}", "${env.DEPLOY_NAME}-sbr-admin-data-api", "${env.DEPLOY_NAME}-ons-sbr-admin-data-api.zip", "conf/${env.DEPLOY_NAME}/manifest.yml")
     }
 }
