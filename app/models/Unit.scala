@@ -50,4 +50,19 @@ object Unit {
       )
     )
   }
+
+  def mapToCaseClass(unit: Map[String, String], recordType: String): Unit = {
+    // TODO: deal with Options/Maps better here?
+    val id = recordType match {
+      case "company" => unit.get("CompanyNumber").get
+      case "vat" => unit.get("vatref").get
+      case "paye" => unit.get("payeref").get
+    }
+    Unit(
+      id,
+      "201706",
+      recordType,
+      unit
+    )
+  }
 }
