@@ -7,11 +7,11 @@ An API for use by sbr-api for accessing CompanyHouse/VAT/PAYE data
 
 If you do not specify a period, the record for the most recent period will be returned.
 
-| method | endpoint                       | example                  |
-|--------|--------------------------------|--------------------------|
-| GET    | /v1/companies/${companyNumber} | GET /v1/company/AB123456 |
-| GET    | /v1/vats/${vatReference}       | GET /v1/vat/123456789012 |
-| GET    | /v1/payes/${payeReference}     | GET /v1/paye/12345678    |
+| method | endpoint                       | example                    |
+|--------|--------------------------------|----------------------------|
+| GET    | /v1/companies/${companyNumber} | GET /v1/companies/AB123456 |
+| GET    | /v1/vats/${vatReference}       | GET /v1/vats/123456789012  |
+| GET    | /v1/payes/${payeReference}     | GET /v1/payes/12345678     |
 
 If you want to specify a particular period, use the format below.
 
