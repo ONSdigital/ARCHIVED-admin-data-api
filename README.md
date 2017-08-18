@@ -71,6 +71,18 @@ To assemble the code + all dependancies into a fat .jar, run the following:
 sbt assembly
 ```
 
+## Deployment
+
+After running the following command:
+ 
+```shell
+sbt clean compile "project api" universal:packageBin
+```
+
+A .zip file is created here, `/target/universal/sbr-admin-data-api.zip`, which is pushed to CloudFoundry. 
+
+The executable inside the .zip is configured to run with default environment variables passed in, as defined in the [build.sbt](https://github.com/ONSdigital/sbr-admin-data-api/blob/feature/hbase-in-memory/build.sbt#L85).
+
 ## Testing
 
 ## Contributing
