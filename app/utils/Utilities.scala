@@ -60,24 +60,22 @@ object Utilities {
     }
   }
 
-  // Source: https://github.com/ONSdigital/business-index-api/blob/develop/api/app/uk/gov/ons/bi/CsvProcessor.scala#L30
-  def readCsv(fileName: String): List[List[String]] = {
+  def readCsv(fileName: String): List[Map[String, String]] = {
     val counter = new AtomicInteger(0)
-    val res = Source.fromFile(fileName).getLines.drop(1).toList.map { line =>
+    val content = Source.fromFile(fileName).getLines.map(_.split(","))
+    val header = content.next
+    val data = content.map { z =>
       Future {
         val c = counter.incrementAndGet()
         if (c % 1000 == 0) Logger.debug(s"Processed 1000 lines of $fileName")
-        splitCsvLine(line)
+        header.zip(
+          z.map(
+            a => a.replaceAll("^\"|\"$", "")
+          )
+        ).toMap
       }
-    }
-    Await.result(Future.sequence(res), 2 minutes)
-  }
-
-  def splitCsvLine(line: String): List[String] = {
-    line.split(",").toList.map(
-      // Remove leading and trailing double qoutes (only present on the CH csv)
-      s => s.replaceAll("^\"|\"$", "")
-    )
+    }.toList
+    Await.result(Future.sequence(data), 2 minutes)
   }
 
   def optionConverter[T](o: Optional[T]): Option[T] = if (o.isPresent) Some(o.get) else None
