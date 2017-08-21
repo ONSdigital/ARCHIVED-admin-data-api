@@ -18,11 +18,10 @@ class CSVData @Inject() (implicit val config: Config) extends DataAccess {
   val vat = csvToCaseClass(config.getString("vatFilename"), "vat")
   val paye = csvToCaseClass(config.getString("payeFilename"), "paye")
 
-  // TODO: remove asInstanceOf[], bad practice
   def getRecordById(id: String, recordType: String): List[SearchKeys] = recordType match {
-    case "company" => ch.filter(_.asInstanceOf[Unit].key == s"$id")
-    case "vat" => vat.filter(_.asInstanceOf[Unit].key == s"$id")
-    case "paye" => paye.filter(_.asInstanceOf[Unit].key == s"$id")
+    case "company" => ch.filter { case (a: Unit) => a.key == s"$id" }
+    case "vat" => vat.filter { case (a: Unit) => a.key == s"$id" }
+    case "paye" => paye.filter { case (a: Unit) => a.key == s"$id" }
   }
 
   def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): List[SearchKeys] = {
