@@ -3,7 +3,7 @@ package models
 import java.util
 
 import play.api.libs.json.{ JsValue, Json, Writes }
-import uk.gov.ons.sbr.data.domain.{ CompanyRegistration, StatisticalUnit }
+import uk.gov.ons.sbr.data.domain.StatisticalUnit
 import utils.Utilities._
 
 import scala.collection.JavaConversions._
@@ -40,27 +40,24 @@ object Unit {
 
   def toJson(u: Unit): JsValue = Json.toJson(u)
 
-  def mapToUnitList(unit: StatisticalUnit): List[Unit] = {
-    List(
-      Unit(
-        unit.getKey,
-        unit.getReferencePeriod.toString,
-        unit.getType.toString,
-        unit.getVariables
-      )
+  def mapToUnit(unit: StatisticalUnit): Unit = {
+    Unit(
+      unit.getKey,
+      unit.getReferencePeriod.toString,
+      unit.getType.toString,
+      unit.getVariables
     )
   }
 
-  def mapToCaseClass(unit: Map[String, String], recordType: String): Unit = {
+  def mapToCaseClass(unit: Map[String, String], recordType: String, period: String): Unit = {
     // TODO: deal with Options/Maps better here?
-    val id = recordType match {
-      case "company" => unit.get("CompanyNumber").get
-      case "vat" => unit.get("vatref").get
-      case "paye" => unit.get("payeref").get
-    }
     Unit(
-      id,
-      "201706",
+      recordType match {
+        case "company" => unit.get("CompanyNumber").getOrElse("")
+        case "vat" => unit.get("vatref").getOrElse("")
+        case "paye" => unit.get("payeref").getOrElse("")
+      },
+      period,
       recordType,
       unit
     )

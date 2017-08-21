@@ -28,10 +28,11 @@ class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends Da
   def loadHBaseData(): scala.Unit = {
     Logger.info("Loading local CSVs into In-Memory HBase...")
     val bulkLoader = new BulkLoader()
+    val period = config.getString("period")
     List(
-      List[String](UnitType.COMPANY_REGISTRATION.toString, "201706", "conf/sample/sbr-2500-ent-ch-data.csv"),
-      List[String](UnitType.VAT.toString, "201706", "conf/sample/vat_data.csv"),
-      List[String](UnitType.PAYE.toString, "201706", "conf/sample/paye_data.csv")
+      List[String](UnitType.COMPANY_REGISTRATION.toString, period, config.getString("chFilename")),
+      List[String](UnitType.VAT.toString, period, config.getString("vatFilename")),
+      List[String](UnitType.PAYE.toString, period, config.getString("payeFilename"))
     ).foreach(arg => {
         Logger.info(s"Loading CSV [${arg(2)}] into HBase for period [${arg(1)}] and type [${arg(0)}]...")
         ToolRunner.run(HBaseConnector.getInstance().getConfiguration(), bulkLoader, arg.toArray)
@@ -49,10 +50,7 @@ class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends Da
       case "vat" => adminController.getVATReturn(id)
       case "paye" => adminController.getPAYEReturn(id)
     }
-    optionConverter(record) match {
-      case Some(c) => Unit.mapToUnitList(c)
-      case None => List()
-    }
+    record.toOption.toUnitList
   }
 
   def getRecordFromHbaseForPeriod(id: String, period: YearMonth, recordType: String): List[Unit] = {
@@ -61,9 +59,6 @@ class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends Da
       case "vat" => adminController.getVATReturnForReferencePeriod(period, id)
       case "paye" => adminController.getPAYEReturnForReferencePeriod(period, id)
     }
-    optionConverter(record) match {
-      case Some(c) => Unit.mapToUnitList(c)
-      case None => List()
-    }
+    record.toOption.toUnitList
   }
 }

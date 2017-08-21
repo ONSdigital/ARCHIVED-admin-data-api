@@ -6,9 +6,11 @@ import java.time.format.DateTimeFormatter
 import java.util.Optional
 import java.util.concurrent.atomic.AtomicInteger
 
+import models.Unit
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.Result
+import uk.gov.ons.sbr.data.domain.StatisticalUnit
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
@@ -87,7 +89,16 @@ object Utilities {
     Await.result(Future.sequence(data), 2 minutes)
   }
 
-  def optionConverter[T](o: Optional[T]): Option[T] = if (o.isPresent) Some(o.get) else None
+  implicit class OptionalConversion[A](val o: Optional[A]) extends AnyVal {
+    def toOption[B](implicit conv: A => B): Option[B] = if (o.isPresent) Some(o.get) else None
+  }
+
+  implicit class StatisticalUnitConversions(val unit: Option[StatisticalUnit]) {
+    def toUnitList(): List[Unit] = unit match {
+      case Some(u) => List(Unit.mapToUnit(u))
+      case None => List()
+    }
+  }
 
   def periodToYearMonth(period: String): YearMonth = {
     YearMonth.parse(period.slice(0, 6), DateTimeFormatter.ofPattern("yyyyMM"))

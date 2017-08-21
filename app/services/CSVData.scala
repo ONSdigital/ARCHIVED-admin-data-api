@@ -30,8 +30,9 @@ class CSVData @Inject() (implicit val config: Config) extends DataAccess {
 
   def csvToCaseClass(fileName: String, recordType: String): List[SearchKeys] = {
     Logger.info(s"Loading in CSV file: ${fileName}")
+    val period = config.getString("period")
     val listOfCaseClasses: List[SearchKeys] = readCsv(fileName).map(
-      c => Unit.mapToCaseClass(c, recordType)
+      c => Unit.mapToCaseClass(c, recordType, period)
     )
     Logger.info(s"Loaded in ${listOfCaseClasses.length} $recordType records from CSV file")
     println(listOfCaseClasses.head)
