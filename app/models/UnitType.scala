@@ -40,7 +40,7 @@ object UnitType {
 
   def toJson(u: UnitType): JsValue = Json.toJson(u)
 
-  def mapToUnit(unit: StatisticalUnit): UnitType = {
+  def mapToUnitType(unit: StatisticalUnit): UnitType = {
     UnitType(
       unit.getKey,
       unit.getReferencePeriod.toString,

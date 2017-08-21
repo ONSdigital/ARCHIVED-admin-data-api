@@ -95,7 +95,7 @@ object Utilities {
 
   implicit class StatisticalUnitConversions(val unit: Option[StatisticalUnit]) {
     def toUnitList(): List[UnitType] = unit match {
-      case Some(u) => List(UnitType.mapToUnit(u))
+      case Some(u) => List(UnitType.mapToUnitType(u))
       case None => List()
     }
   }
