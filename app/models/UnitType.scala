@@ -12,7 +12,7 @@ import scala.collection.JavaConversions._
  * Created by coolit on 10/08/2017.
  */
 
-case class Unit(
+case class UnitType(
   key: String,
   period: String,
   unitType: String,
@@ -20,9 +20,9 @@ case class Unit(
   classType: String = "unit"
 ) extends SearchKeys
 
-object Unit {
-  implicit val writer = new Writes[Unit] {
-    def writes(u: Unit): JsValue = {
+object UnitType {
+  implicit val writer = new Writes[UnitType] {
+    def writes(u: UnitType): JsValue = {
       Json.obj(
         "key" -> u.key,
         "period" -> u.period,
@@ -38,10 +38,10 @@ object Unit {
     case "vat" => checkRegex(id, "[0-9]{12}")
   }
 
-  def toJson(u: Unit): JsValue = Json.toJson(u)
+  def toJson(u: UnitType): JsValue = Json.toJson(u)
 
-  def mapToUnit(unit: StatisticalUnit): Unit = {
-    Unit(
+  def mapToUnit(unit: StatisticalUnit): UnitType = {
+    UnitType(
       unit.getKey,
       unit.getReferencePeriod.toString,
       unit.getType.toString,
@@ -49,9 +49,9 @@ object Unit {
     )
   }
 
-  def mapToCaseClass(unit: Map[String, String], recordType: String, period: String): Unit = {
+  def mapToCaseClass(unit: Map[String, String], recordType: String, period: String): UnitType = {
     // TODO: deal with Options/Maps better here?
-    Unit(
+    UnitType(
       recordType match {
         case "company" => unit.get("CompanyNumber").getOrElse("")
         case "vat" => unit.get("vatref").getOrElse("")

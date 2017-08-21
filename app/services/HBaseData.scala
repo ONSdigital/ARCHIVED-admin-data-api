@@ -4,7 +4,7 @@ import java.time.YearMonth
 import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.Config
-import models.{ SearchKeys, Unit }
+import models.SearchKeys
 import org.apache.hadoop.util.ToolRunner
 import play.api.Logger
 import uk.gov.ons.sbr.data.controller.AdminDataController
@@ -25,7 +25,7 @@ class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends Da
 
   if (loadData) loadHBaseData()
 
-  def loadHBaseData(): scala.Unit = {
+  def loadHBaseData(): Unit = {
     Logger.info("Loading local CSVs into In-Memory HBase...")
     val bulkLoader = new BulkLoader()
     val period = config.getString("period")
@@ -44,16 +44,17 @@ class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends Da
   def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): List[SearchKeys] =
     getRecordFromHbaseForPeriod(id, period, recordType)
 
-  def getRecordFromHbase(id: String, recordType: String): List[Unit] = {
+  def getRecordFromHbase(id: String, recordType: String): List[models.UnitType] = {
     val record = recordType match {
       case "company" => adminController.getCompanyRegistration(id)
       case "vat" => adminController.getVATReturn(id)
       case "paye" => adminController.getPAYEReturn(id)
     }
-    record.toOption.toUnitList
+    val z = record.toOption.toUnitList
+    z
   }
 
-  def getRecordFromHbaseForPeriod(id: String, period: YearMonth, recordType: String): List[Unit] = {
+  def getRecordFromHbaseForPeriod(id: String, period: YearMonth, recordType: String): List[models.UnitType] = {
     val record = recordType match {
       case "company" => adminController.getCompanyRegistrationForReferencePeriod(period, id)
       case "vat" => adminController.getVATReturnForReferencePeriod(period, id)

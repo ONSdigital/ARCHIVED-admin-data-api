@@ -1,7 +1,7 @@
 package controllers.v1
 
 import io.swagger.annotations._
-import play.api.mvc.{ Action, AnyContent, Result }
+import play.api.mvc.{ Action, AnyContent, Result, Controller }
 import utils.Utilities._
 import javax.inject.Inject
 import java.time.DateTimeException
@@ -18,7 +18,7 @@ import scala.util.{ Failure, Success, Try }
  * Created by coolit on 18/07/2017.
  */
 @Api("Search")
-class SearchController @Inject() (data: DataAccess, val config: Config) extends ControllerUtils {
+class SearchController @Inject() (data: DataAccess, val config: Config) extends Controller {
 
   val src = config.getString("source")
 
@@ -140,7 +140,7 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
     val src: String = config.getString("source")
     Logger.info(s"Searching for $refType with id: ${id} in source: ${src}")
     id match {
-      case id if Unit.validateUnitId(id, refType) => Try(data.getRecordById(id, refType)) match {
+      case id if UnitType.validateUnitId(id, refType) => Try(data.getRecordById(id, refType)) match {
         case Success(results) => resultsMatcher(results, id)
         case Failure(_) => InternalServerError(errAsJson(INTERNAL_SERVER_ERROR, "Internal Server Error", s"An error has occurred, please contact the server administrator")).future
       }
@@ -152,7 +152,7 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
     val src: String = config.getString("source")
     Logger.info(s"Searching for $refType with id: ${id}, for period: ${period} in source: ${src}")
     id match {
-      case id if Unit.validateUnitId(id, refType) => Try(periodToYearMonth(period)) match {
+      case id if UnitType.validateUnitId(id, refType) => Try(periodToYearMonth(period)) match {
         case Success(validPeriod) => Try(data.getRecordByIdForPeriod(id, validPeriod, refType)) match {
           case Success(results) => resultsMatcher(results, id)
           case Failure(_) => InternalServerError(errAsJson(INTERNAL_SERVER_ERROR, "Internal Server Error", s"An error has occurred, please contact the server administrator")).future
@@ -170,7 +170,7 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
       case (c: Company) => Ok(Company.toJson(c)).future
       case (p: PAYE) => Ok(PAYE.toJson(p)).future
       case (v: VAT) => Ok(VAT.toJson(v)).future
-      case (u: Unit) => Ok(Unit.toJson(u)).future
+      case (u: UnitType) => Ok(UnitType.toJson(u)).future
     }
   }
 }

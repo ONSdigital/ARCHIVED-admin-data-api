@@ -1,10 +1,8 @@
 import com.google.inject.AbstractModule
 import java.time.Clock
 
-import com.google.inject.name.Names
 import com.typesafe.config.{ Config, ConfigFactory }
-import play.api.{ Configuration, Environment, Logger }
-import services._
+import play.api.{ Configuration, Environment }
 import config.SbrConfigManager
 import services._
 

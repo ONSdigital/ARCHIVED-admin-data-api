@@ -19,9 +19,9 @@ class CSVData @Inject() (implicit val config: Config) extends DataAccess {
   val paye = csvToCaseClass(config.getString("payeFilename"), "paye")
 
   def getRecordById(id: String, recordType: String): List[SearchKeys] = recordType match {
-    case "company" => ch.filter { case (a: Unit) => a.key == s"$id" }
-    case "vat" => vat.filter { case (a: Unit) => a.key == s"$id" }
-    case "paye" => paye.filter { case (a: Unit) => a.key == s"$id" }
+    case "company" => ch.filter { case (a: UnitType) => a.key == s"$id" }
+    case "vat" => vat.filter { case (a: UnitType) => a.key == s"$id" }
+    case "paye" => paye.filter { case (a: UnitType) => a.key == s"$id" }
   }
 
   def getRecordByIdForPeriod(id: String, period: YearMonth, recordType: String): List[SearchKeys] = {
@@ -32,7 +32,7 @@ class CSVData @Inject() (implicit val config: Config) extends DataAccess {
     Logger.info(s"Loading in CSV file: ${fileName}")
     val period = config.getString("period")
     val listOfCaseClasses: List[SearchKeys] = readCsv(fileName).map(
-      c => Unit.mapToCaseClass(c, recordType, period)
+      c => UnitType.mapToCaseClass(c, recordType, period)
     )
     Logger.info(s"Loaded in ${listOfCaseClasses.length} $recordType records from CSV file")
     println(listOfCaseClasses.head)

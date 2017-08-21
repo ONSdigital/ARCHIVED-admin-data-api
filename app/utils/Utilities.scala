@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Optional
 import java.util.concurrent.atomic.AtomicInteger
 
-import models.Unit
+import models.UnitType
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.Result
@@ -94,8 +94,8 @@ object Utilities {
   }
 
   implicit class StatisticalUnitConversions(val unit: Option[StatisticalUnit]) {
-    def toUnitList(): List[Unit] = unit match {
-      case Some(u) => List(Unit.mapToUnit(u))
+    def toUnitList(): List[UnitType] = unit match {
+      case Some(u) => List(UnitType.mapToUnit(u))
       case None => List()
     }
   }
