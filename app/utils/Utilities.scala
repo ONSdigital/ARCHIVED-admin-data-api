@@ -6,14 +6,17 @@ import java.time.format.DateTimeFormatter
 import java.util.Optional
 import java.util.concurrent.atomic.AtomicInteger
 
+import models.UnitType
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.Result
+import uk.gov.ons.sbr.data.domain.StatisticalUnit
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration._
 import scala.io.Source
+import scala.util.{ Failure, Success, Try }
 
 /**
  * Created by coolit on 18/07/2017.
@@ -60,27 +63,42 @@ object Utilities {
     }
   }
 
-  // Source: https://github.com/ONSdigital/business-index-api/blob/develop/api/app/uk/gov/ons/bi/CsvProcessor.scala#L30
-  def readCsv(fileName: String): List[List[String]] = {
+  def readFile(fileName: String): Iterator[String] = {
+    Logger.info(s"Reading in file: $fileName")
+    Try(Source.fromFile(fileName).getLines) match {
+      case Success(x) => x
+      case Failure(e) => throw new RuntimeException(s"Cannot read file $fileName", e)
+    }
+  }
+
+  def readCsv(fileName: String): List[Map[String, String]] = {
     val counter = new AtomicInteger(0)
-    val res = Source.fromFile(fileName).getLines.drop(1).toList.map { line =>
+    val content = readFile(fileName).map(_.split(","))
+    val header = content.next
+    val data = content.map { z =>
       Future {
         val c = counter.incrementAndGet()
         if (c % 1000 == 0) Logger.debug(s"Processed 1000 lines of $fileName")
-        splitCsvLine(line)
+        header.zip(
+          z.map(
+            a => a.replaceAll("^\"|\"$", "")
+          )
+        ).toMap
       }
+    }.toList
+    Await.result(Future.sequence(data), 2 minutes)
+  }
+
+  implicit class OptionalConversion[A](val o: Optional[A]) extends AnyVal {
+    def toOption[B](implicit conv: A => B): Option[B] = if (o.isPresent) Some(o.get) else None
+  }
+
+  implicit class StatisticalUnitConversions(val unit: Option[StatisticalUnit]) {
+    def toUnitList(): List[UnitType] = unit match {
+      case Some(u) => List(UnitType.mapToUnitType(u))
+      case None => List()
     }
-    Await.result(Future.sequence(res), 2 minutes)
   }
-
-  def splitCsvLine(line: String): List[String] = {
-    line.split(",").toList.map(
-      // Remove leading and trailing double qoutes (only present on the CH csv)
-      s => s.replaceAll("^\"|\"$", "")
-    )
-  }
-
-  def optionConverter[T](o: Optional[T]): Option[T] = if (o.isPresent) Some(o.get) else None
 
   def periodToYearMonth(period: String): YearMonth = {
     YearMonth.parse(period.slice(0, 6), DateTimeFormatter.ofPattern("yyyyMM"))

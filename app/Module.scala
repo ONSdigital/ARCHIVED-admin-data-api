@@ -1,10 +1,7 @@
 import com.google.inject.AbstractModule
-import java.time.Clock
 
-import com.google.inject.name.Names
 import com.typesafe.config.{ Config, ConfigFactory }
-import play.api.{ Configuration, Environment, Logger }
-import services._
+import play.api.{ Configuration, Environment }
 import config.SbrConfigManager
 import services._
 
@@ -23,7 +20,6 @@ class Module(environment: Environment, configuration: Configuration) extends Abs
   override def configure() = {
     val config = SbrConfigManager.envConf(ConfigFactory.load())
     bind(classOf[Config]).toInstance(config)
-    bind(classOf[Clock]).toInstance(Clock.systemDefaultZone)
 
     config.getString("source") match {
       case "csv" => bind(classOf[DataAccess]).to(classOf[CSVData])

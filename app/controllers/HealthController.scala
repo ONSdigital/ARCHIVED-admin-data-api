@@ -3,7 +3,6 @@ package controllers
 import io.swagger.annotations.{ Api, ApiOperation, ApiResponse, ApiResponses }
 import play.api.mvc.{ Action, Controller }
 import org.joda.time.DateTime
-import play.api.mvc.{ Controller, _ }
 
 @Api("Utils")
 class HealthController extends Controller {

@@ -1,7 +1,7 @@
 package controllers.v1
 
 import io.swagger.annotations._
-import play.api.mvc.{ Action, AnyContent, Result }
+import play.api.mvc.{ Action, AnyContent, Result, Controller }
 import utils.Utilities._
 import javax.inject.Inject
 import java.time.DateTimeException
@@ -18,7 +18,7 @@ import scala.util.{ Failure, Success, Try }
  * Created by coolit on 18/07/2017.
  */
 @Api("Search")
-class SearchController @Inject() (data: DataAccess, val config: Config) extends ControllerUtils {
+class SearchController @Inject() (data: DataAccess, val config: Config) extends Controller {
 
   val src = config.getString("source")
 
@@ -139,45 +139,38 @@ class SearchController @Inject() (data: DataAccess, val config: Config) extends 
   def getRefById(id: String, refType: String): Future[Result] = {
     val src: String = config.getString("source")
     Logger.info(s"Searching for $refType with id: ${id} in source: ${src}")
-    val res = id match {
-      case id if Unit.validateUnitId(id, refType) => Try(data.getRecordById(id, refType)) match {
-        case Success(results) => results match {
-          case Nil => NotFound(errAsJson(404, "Not Found", s"Could not find value ${id}")).future
-          case x => x.head match {
-            case (c: Company) => Ok(Company.toJson(c)).future
-            case (p: PAYE) => Ok(PAYE.toJson(p)).future
-            case (v: VAT) => Ok(VAT.toJson(v)).future
-            case (u: Unit) => Ok(Unit.toJson(u)).future
-          }
-        }
+    id match {
+      case id if UnitType.validateUnitId(id, refType) => Try(data.getRecordById(id, refType)) match {
+        case Success(results) => resultsMatcher(results, id)
         case Failure(_) => InternalServerError(errAsJson(INTERNAL_SERVER_ERROR, "Internal Server Error", s"An error has occurred, please contact the server administrator")).future
       }
       case _ => UnprocessableEntity(errAsJson(UNPROCESSABLE_ENTITY, "Unprocessable Entity", "Please ensure the vat/ch/paye reference is the correct length/format")).future
     }
-    res
   }
 
   def getRefByIdForPeriod(id: String, refType: String, period: String): Future[Result] = {
     val src: String = config.getString("source")
     Logger.info(s"Searching for $refType with id: ${id}, for period: ${period} in source: ${src}")
-    val res = id match {
-      case id if Unit.validateUnitId(id, refType) => Try(periodToYearMonth(period)) match {
+    id match {
+      case id if UnitType.validateUnitId(id, refType) => Try(periodToYearMonth(period)) match {
         case Success(validPeriod) => Try(data.getRecordByIdForPeriod(id, validPeriod, refType)) match {
-          case Success(results) => results match {
-            case Nil => NotFound(errAsJson(NOT_FOUND, "Not Found", s"Could not find value ${id}")).future
-            case x => x.head match {
-              case (c: Company) => Ok(Company.toJson(c)).future
-              case (p: PAYE) => Ok(PAYE.toJson(p)).future
-              case (v: VAT) => Ok(VAT.toJson(v)).future
-              case (u: Unit) => Ok(Unit.toJson(u)).future
-            }
-          }
+          case Success(results) => resultsMatcher(results, id)
           case Failure(_) => InternalServerError(errAsJson(INTERNAL_SERVER_ERROR, "Internal Server Error", s"An error has occurred, please contact the server administrator")).future
         }
         case Failure(_: DateTimeException) => UnprocessableEntity(errAsJson(UNPROCESSABLE_ENTITY, "Unprocessable Entity", "Please ensure the period is in the following format: YYYYMM")).future
+        case _ => InternalServerError(errAsJson(INTERNAL_SERVER_ERROR, "Internal Server Error", s"An error has occurred, please contact the server administrator")).future
       }
       case _ => UnprocessableEntity(errAsJson(UNPROCESSABLE_ENTITY, "Unprocessable Entity", "Please ensure the vat/ch/paye reference is the correct length/format")).future
     }
-    res
+  }
+
+  def resultsMatcher(results: List[SearchKeys], id: String): Future[Result] = results match {
+    case Nil => NotFound(errAsJson(404, "Not Found", s"Could not find value ${id}")).future
+    case x => x.head match {
+      case (c: Company) => Ok(Company.toJson(c)).future
+      case (p: PAYE) => Ok(PAYE.toJson(p)).future
+      case (v: VAT) => Ok(VAT.toJson(v)).future
+      case (u: UnitType) => Ok(UnitType.toJson(u)).future
+    }
   }
 }

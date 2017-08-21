@@ -1,6 +1,7 @@
 import play.sbt.PlayScala
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
 import sbtassembly.AssemblyPlugin.autoImport._
+import com.typesafe.sbt.SbtNativePackager.Universal
 
 licenses := Seq("MIT-License" -> url("https://opensource.org/licenses/MIT"))
 
@@ -75,6 +76,16 @@ lazy val api = (project in file("."))
     buildInfoOptions += BuildInfoOption.ToJson,
     buildInfoOptions += BuildInfoOption.BuildTime,
     buildInfoPackage := "controllers",
+    // After universal:packageBin has run, the csv files cannot be found, so need to move them to the right place.
+    mappings in Universal += file("conf/sample/sbr-2500-ent-ch-data.csv") -> "bin/conf/sample/sbr-2500-ent-ch-data.csv",
+    mappings in Universal += file("conf/sample/vat_data.csv") -> "bin/conf/sample/vat_data.csv",
+    mappings in Universal += file("conf/sample/paye_data.csv") -> "bin/conf/sample/paye_data.csv",
+    mappings in Universal += file("conf/sample/company_house_data.csv") -> "bin/conf/sample/company_house_data.csv",
+    // Run with proper default env vars set for hbaseInMemory
+    javaOptions in Universal ++= Seq(
+      "-Dsource=hbaseInMemory",
+      "-Dsbr.hbase.inmemory=true"
+    ),
     libraryDependencies ++= Seq (
       filters,
       jdbc,
@@ -85,14 +96,7 @@ lazy val api = (project in file("."))
       "org.webjars"                  %     "swagger-ui"          %    "2.2.10-1",
       "org.apache.hive"              %     "hive-jdbc"           %    "1.2.1",
       "org.apache.spark"             %     "spark-hive_2.11"     %    "2.1.0",
-      "mysql"                        %     "mysql-connector-java" %   "5.1.35",
-      "org.slf4j"                    %     "slf4j-api"           %    "1.7.25",
-      "org.apache.hbase"             %     "hbase"               %    Versions.hbase pomOnly(),
-      "org.apache.hbase"             %     "hbase-client"        %    Versions.hbase,
-      "org.apache.hbase"             %     "hbase-common"        %    Versions.hbase,
-      "org.apache.hbase"             %     "hbase-testing-util"  %    Versions.hbase % Test,
-      "org.apache.hbase"             %     "hbase-server"        %    Versions.hbase,
-      "org.apache.hbase"             %     "hbase-server"        %    Versions.hbase classifier "tests"
+      "mysql"                        %     "mysql-connector-java" %   "5.1.35"
     ),
     assemblyJarName in assembly := "sbr-admin-data-api.jar",
     assemblyMergeStrategy in assembly := {
