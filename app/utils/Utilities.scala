@@ -14,6 +14,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration._
 import scala.io.Source
+import scala.util.{ Failure, Success, Try }
 
 /**
  * Created by coolit on 18/07/2017.
@@ -60,9 +61,17 @@ object Utilities {
     }
   }
 
+  def readFile(fileName: String): Iterator[String] = {
+    Logger.info(s"Reading in file: $fileName")
+    Try(Source.fromFile(fileName).getLines) match {
+      case Success(x) => x
+      case Failure(e) => throw new RuntimeException(s"Cannot read file $fileName", e)
+    }
+  }
+
   def readCsv(fileName: String): List[Map[String, String]] = {
     val counter = new AtomicInteger(0)
-    val content = Source.fromFile(fileName).getLines.map(_.split(","))
+    val content = readFile(fileName).map(_.split(","))
     val header = content.next
     val data = content.map { z =>
       Future {
