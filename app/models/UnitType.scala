@@ -34,7 +34,7 @@ object UnitType {
 
   def validateUnitId(id: String, unitType: String): Boolean = unitType match {
     case "company" => checkRegex(id, "[A-Z]{2}\\d{6}", "[0-9]{8}")
-    case "paye" => checkRegex(id, "[0-9]{5,13}")
+    case "paye" => checkRegex(id, "[A-Z0-9]{5,13}")
     case "vat" => checkRegex(id, "[0-9]{12}")
   }
 
