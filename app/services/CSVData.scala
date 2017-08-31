@@ -35,7 +35,6 @@ class CSVData @Inject() (implicit val config: Config) extends DataAccess {
       c => UnitType.mapToCaseClass(c, recordType, period)
     )
     Logger.info(s"Loaded in ${listOfCaseClasses.length} $recordType records from CSV file")
-    println(listOfCaseClasses.head)
     listOfCaseClasses
   }
 }
