@@ -33,9 +33,7 @@ pipeline {
                 dir('gitlab') {
                     git(url: "$GITLAB_URL/StatBusReg/sbr-admin-data-api.git", credentialsId: 'sbr-gitlab-id', branch: 'develop')
                 }
-                colourText("info", "Running ls...")
-                sh 'ls'
-                sh 'pwd'
+                // Replace fake VAT/PAYE data with real data
                 sh 'rm -rf conf/sample/vat_data.csv'
                 sh 'rm -rf conf/sample/paye_data.csv'
                 sh 'cp gitlab/dev/data/sbr-2500-ent-vat-data.csv conf/sample/vat_data.csv'
