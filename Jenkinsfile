@@ -9,9 +9,9 @@ pipeline {
         timeout(time: 30, unit: 'MINUTES')
     }
     stages {
-        stage('Checkout'){
+        stage('Checkout') {
             agent any
-            steps{
+            steps {
                 deleteDir()
                 checkout scm
                 stash name: 'app'
@@ -30,9 +30,22 @@ pipeline {
                 script {
                     env.NODE_STAGE = "Build"
                 }
+                dir('gitlab') {
+                    git(url: "$GITLAB_URL/StatBusReg/sbr-admin-data-api.git", credentialsId: 'sbr-gitlab-id', branch: 'develop')
+                }
+                colourText("info", "Running ls...")
+                sh 'ls'
+                sh 'pwd'
+                sh 'rm -rf conf/sample/vat_data.csv'
+                sh 'rm -rf conf/sample/paye_data.csv'
+                sh 'cp gitlab/dev/data/sbr-2500-ent-vat-data.csv conf/sample/vat_data.csv'
+                sh 'cp gitlab/dev/data/sbr-2500-ent-paye-data.csv conf/sample/paye_data.csv'
+
                 sh '''
                 $SBT clean compile "project api" universal:packageBin
                 cp target/universal/sbr-admin-data-api-*.zip dev-ons-sbr-admin-data-api.zip
+                cp target/universal/sbr-admin-data-api-*.zip test-ons-sbr-admin-data-api.zip
+               cp target/universal/sbr-admin-data-api-*.zip prod-ons-sbr-admin-data-api.zip
                 '''
             }
         }
@@ -89,30 +102,9 @@ pipeline {
                     env.NODE_STAGE = "Bundle"
                 }
                 colourText("info", "Bundling....")
-                dir('conf') {
-                    git(url: "$GITLAB_URL/StatBusReg/sbr-api.git", credentialsId: 'sbr-gitlab-id', branch: 'feature/env-key')
-                }
                 //packageApp('dev')
                 //packageApp('test')
                 stash name: "zip"
-            }
-        }
-        stage ('Approve') {
-            agent { label 'adrianharristesting' }
-             when {
-                 anyOf {
-                     branch "develop"
-                     branch "release"
-                     branch "master"
-                 }
-             }
-            steps {
-                script {
-                    env.NODE_STAGE = "Approve"
-                }
-                timeout(time: 2, unit: 'MINUTES') {
-                    input message: 'Do you wish to deploy the build to ${env.BRANCH_NAME} (Note: Live deployment will create an artifact)?'
-                }
             }
         }
         stage ('Release') {
@@ -206,6 +198,6 @@ pipeline {
 def deploy () {
     echo "Deploying Api app to ${env.DEPLOY_NAME}"
     withCredentials([string(credentialsId: "sbr-api-dev-secret-key", variable: 'APPLICATION_SECRET')]) {
-        deployToCloudFoundry("cloud-foundry-sbr-${env.DEPLOY_NAME}-user", 'sbr', "${env.DEPLOY_NAME}", "${env.DEPLOY_NAME}-sbr-admin-data-api", "${env.DEPLOY_NAME}-ons-sbr-admin-data-api.zip", "conf/${env.DEPLOY_NAME}/manifest.yml")
-    }
+        deployToCloudFoundry("cloud-foundry-sbr-${env.DEPLOY_NAME}-user", 'sbr', "${env.DEPLOY_NAME}", "${env.DEPLOY_NAME}-sbr-admin-data-api", "${env.DEPLOY_NAME}-ons-sbr-admin-data-api.zip", "gitlab/${env.DEPLOY_NAME}/manifest.yml")
+   }
 }
