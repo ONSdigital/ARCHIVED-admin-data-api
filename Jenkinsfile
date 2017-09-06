@@ -38,9 +38,6 @@ pipeline {
 
                 sh '''
                 $SBT clean compile "project api" universal:packageBin coverage test coverageReport
-                cp target/universal/sbr-admin-data-api-*.zip dev-ons-sbr-admin-data-api.zip
-                cp target/universal/sbr-admin-data-api-*.zip test-ons-sbr-admin-data-api.zip
-                cp target/universal/sbr-admin-data-api-*.zip prod-ons-sbr-admin-data-api.zip
                 '''
                 script {
                     env.NODE_STAGE = "Build"
