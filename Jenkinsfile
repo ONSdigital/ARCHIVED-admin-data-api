@@ -37,7 +37,7 @@ pipeline {
                 sh 'cp gitlab/dev/data/sbr-2500-ent-paye-data.csv conf/sample/paye_data.csv'
 
                 sh '''
-                $SBT clean compile "project api" universal:packageBin
+                $SBT clean compile "project api" universal:packageBin coverage test coverageReport
                 cp target/universal/sbr-admin-data-api-*.zip dev-ons-sbr-admin-data-api.zip
                 cp target/universal/sbr-admin-data-api-*.zip test-ons-sbr-admin-data-api.zip
                 cp target/universal/sbr-admin-data-api-*.zip prod-ons-sbr-admin-data-api.zip
