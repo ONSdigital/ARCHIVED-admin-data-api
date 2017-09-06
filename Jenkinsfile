@@ -172,7 +172,7 @@ pipeline {
                 }
             }
             steps {
-                sh "'$SBT it:test'
+                sh '$SBT it:test'
                 colourText("success", 'Integration Tests - For Release or Dev environment.')
             }
         }
