@@ -35,11 +35,11 @@ class RouteSpec extends TestUtils {
 
   "SearchController" should {
     "return missing parameter error" in {
-      val suggest = fakeRequest(s"/v1/company?id=")
-      status(suggest) mustBe BAD_REQUEST
+      val suggest = fakeRequest(s"/v1/companies/6")
+      status(suggest) mustBe UNPROCESSABLE_ENTITY
       contentType(suggest) mustBe Some("application/json")
       val err_code: String = getJsValue(contentAsJson(suggest) \ "code")
-      err_code mustBe s""""missing parameter""""
+      err_code mustBe s""""Unprocessable Entity""""
     }
   }
 
