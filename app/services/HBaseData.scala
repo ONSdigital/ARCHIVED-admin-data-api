@@ -28,11 +28,15 @@ class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends Da
   def loadHBaseData(): Unit = {
     Logger.info("Loading local CSVs into In-Memory HBase...")
     val bulkLoader = new BulkLoader()
-    val period = config.getString("period")
+    val firstPeriod = config.getString("firstPeriod")
+    val secondPeriod = config.getString("secondPeriod")
     List(
-      List[String](UnitType.COMPANY_REGISTRATION.toString, period, config.getString("chFilename")),
-      List[String](UnitType.VAT.toString, period, config.getString("vatFilename")),
-      List[String](UnitType.PAYE.toString, period, config.getString("payeFilename"))
+      List[String](UnitType.COMPANY_REGISTRATION.toString, firstPeriod, config.getString("chFirstPeriod")),
+      List[String](UnitType.VAT.toString, firstPeriod, config.getString("vatFirstPeriod")),
+      List[String](UnitType.PAYE.toString, firstPeriod, config.getString("payeFirstPeriod")),
+      List[String](UnitType.COMPANY_REGISTRATION.toString, secondPeriod, config.getString("chSecondPeriod")),
+      List[String](UnitType.VAT.toString, secondPeriod, config.getString("vatSecondPeriod")),
+      List[String](UnitType.PAYE.toString, secondPeriod, config.getString("payeSecondPeriod"))
     ).foreach(arg => {
         Logger.info(s"Loading CSV [${arg(2)}] into HBase for period [${arg(1)}] and type [${arg(0)}]...")
         ToolRunner.run(HBaseConnector.getInstance().getConfiguration(), bulkLoader, arg.toArray)
