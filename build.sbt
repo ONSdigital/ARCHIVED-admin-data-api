@@ -76,16 +76,6 @@ lazy val api = (project in file("."))
     buildInfoOptions += BuildInfoOption.ToJson,
     buildInfoOptions += BuildInfoOption.BuildTime,
     buildInfoPackage := "controllers",
-    // After universal:packageBin has run, the csv files cannot be found, so need to move them to the right place.
-    mappings in Universal += file("conf/sample/201706/sbr-2500-ent-ch-data.csv") -> "bin/conf/sample/201706/sbr-2500-ent-ch-data.csv",
-    mappings in Universal += file("conf/sample/201706/vat_data.csv") -> "bin/conf/sample/201706/vat_data.csv",
-    mappings in Universal += file("conf/sample/201706/paye_data.csv") -> "bin/conf/sample/201706/paye_data.csv",
-    mappings in Universal += file("conf/sample/201706/company_house_data.csv") -> "bin/conf/sample/201706/company_house_data.csv",
-    // second load
-    mappings in Universal += file("conf/sample/201708/sbr-2500-ent-ch-data.csv") -> "bin/conf/sample/201708/sbr-2500-ent-ch-data.csv",
-    mappings in Universal += file("conf/sample/201708/vat_data.csv") -> "bin/conf/sample/201708/vat_data.csv",
-    mappings in Universal += file("conf/sample/201708/paye_data.csv") -> "bin/conf/sample/201708/paye_data.csv",
-    mappings in Universal += file("conf/sample/201708/company_house_data.csv") -> "bin/conf/sample/201708/company_house_data.csv",
     // Run with proper default env vars set for hbaseInMemory
     javaOptions in Universal ++= Seq(
       "-Dsource=hbaseInMemory",
