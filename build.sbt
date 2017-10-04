@@ -81,11 +81,6 @@ lazy val api = (project in file("."))
     mappings in Universal += file("conf/sample/vat_data.csv") -> "bin/conf/sample/vat_data.csv",
     mappings in Universal += file("conf/sample/paye_data.csv") -> "bin/conf/sample/paye_data.csv",
     mappings in Universal += file("conf/sample/company_house_data.csv") -> "bin/conf/sample/company_house_data.csv",
-    // Run with proper default env vars set for hbaseInMemory
-    javaOptions in Universal ++= Seq(
-      "-Dsource=hbaseInMemory",
-      "-Dsbr.hbase.inmemory=true"
-    ),
     libraryDependencies ++= Seq (
       filters,
       jdbc,
