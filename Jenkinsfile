@@ -14,19 +14,18 @@ pipeline {
             steps {
                 deleteDir()
                 checkout scm
+                stash name: 'app'
                 sh "$SBT version"
                 script {
                     version = '1.0.' + env.BUILD_NUMBER
                     currentBuild.displayName = version
                     env.NODE_STAGE = "Checkout"
                 }
-                stash name: 'app'
             }
         }
         stage('Build'){
-            agent { label 'build' }
+            agent any
             steps {
-                unstash 'app'
                 colourText("info", "Building ${env.BUILD_ID} on ${env.JENKINS_URL} from branch ${env.BRANCH_NAME}")
                 dir('gitlab') {
                     git(url: "$GITLAB_URL/StatBusReg/sbr-admin-data-api.git", credentialsId: 'sbr-gitlab-id', branch: 'develop')
@@ -59,7 +58,7 @@ pipeline {
             }
         }
         stage('Static Analysis') {
-            agent { label 'build' }
+            agent any
             steps {
                 parallel (
                         "Unit" :  {
@@ -98,7 +97,7 @@ pipeline {
             }
         }
         stage ('Bundle') {
-            agent { label 'build' }
+            agent any
             when {
                 anyOf {
                     branch "develop"
@@ -117,7 +116,7 @@ pipeline {
             }
         }
         stage ('Release') {
-            agent { label 'build' }
+            agent any
             when {
                 branch "master"
             }
@@ -126,7 +125,7 @@ pipeline {
             }
         }
         stage ('Package and Push Artifact') {
-            agent { label 'build' }
+            agent any
             when {
                 branch "master"
             }
@@ -140,7 +139,7 @@ pipeline {
 
         }
         stage('Deploy'){
-            agent { label 'build' }
+            agent any
             when {
                 anyOf {
                     branch "develop"
@@ -163,7 +162,7 @@ pipeline {
         }
 
         stage('Integration Tests') {
-            agent { label 'build' }
+            agent any
             when {
                 anyOf {
                     branch "develop"
