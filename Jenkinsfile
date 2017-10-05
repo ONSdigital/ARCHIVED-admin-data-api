@@ -14,18 +14,19 @@ pipeline {
             steps {
                 deleteDir()
                 checkout scm
-                stash name: 'app'
                 sh "$SBT version"
                 script {
                     version = '1.0.' + env.BUILD_NUMBER
                     currentBuild.displayName = version
                     env.NODE_STAGE = "Checkout"
                 }
+                stash name: 'app'
             }
         }
         stage('Build'){
-            agent any
+            agent { label 'build' }
             steps {
+                unstash 'app'
                 colourText("info", "Building ${env.BUILD_ID} on ${env.JENKINS_URL} from branch ${env.BRANCH_NAME}")
                 dir('gitlab') {
                     git(url: "$GITLAB_URL/StatBusReg/sbr-admin-data-api.git", credentialsId: 'sbr-gitlab-id', branch: 'develop')
@@ -35,6 +36,7 @@ pipeline {
                 sh 'rm -rf conf/sample/paye_data.csv'
                 sh 'cp gitlab/dev/data/sbr-2500-ent-vat-data.csv conf/sample/vat_data.csv'
                 sh 'cp gitlab/dev/data/sbr-2500-ent-paye-data.csv conf/sample/paye_data.csv'
+                sh 'cp gitlab/* conf'
 
                 sh '''
                 $SBT clean compile "project api" universal:packageBin coverage test coverageReport
@@ -57,7 +59,7 @@ pipeline {
             }
         }
         stage('Static Analysis') {
-            agent any
+            agent { label 'build' }
             steps {
                 parallel (
                         "Unit" :  {
@@ -96,7 +98,7 @@ pipeline {
             }
         }
         stage ('Bundle') {
-            agent any
+            agent { label 'build' }
             when {
                 anyOf {
                     branch "develop"
@@ -115,7 +117,7 @@ pipeline {
             }
         }
         stage ('Release') {
-            agent any
+            agent { label 'build' }
             when {
                 branch "master"
             }
@@ -124,7 +126,7 @@ pipeline {
             }
         }
         stage ('Package and Push Artifact') {
-            agent any
+            agent { label 'build' }
             when {
                 branch "master"
             }
@@ -138,7 +140,7 @@ pipeline {
 
         }
         stage('Deploy'){
-            agent any
+            agent { label 'build' }
             when {
                 anyOf {
                     branch "develop"
@@ -161,7 +163,7 @@ pipeline {
         }
 
         stage('Integration Tests') {
-            agent any
+            agent { label 'build' }
             when {
                 anyOf {
                     branch "develop"
