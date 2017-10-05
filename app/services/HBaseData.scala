@@ -1,16 +1,20 @@
 package services
 
+import java.io.File
 import java.time.YearMonth
 import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.Config
+
 import models.SearchKeys
 import org.apache.hadoop.util.ToolRunner
 import play.api.Logger
+
 import uk.gov.ons.sbr.data.controller.AdminDataController
 import uk.gov.ons.sbr.data.domain.UnitType
 import uk.gov.ons.sbr.data.hbase.load.BulkLoader
 import uk.gov.ons.sbr.data.hbase.HBaseConnector
+
 import utils.Utilities._
 
 /**
@@ -28,11 +32,15 @@ class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends Da
   def loadHBaseData(): Unit = {
     Logger.info("Loading local CSVs into In-Memory HBase...")
     val bulkLoader = new BulkLoader()
-    val period = config.getString("period")
+    val firstPeriod = "201706"
+    val secondPeriod = "201708"
     List(
-      List[String](UnitType.COMPANY_REGISTRATION.toString, period, config.getString("chFilename")),
-      List[String](UnitType.VAT.toString, period, config.getString("vatFilename")),
-      List[String](UnitType.PAYE.toString, period, config.getString("payeFilename"))
+      List[String](UnitType.COMPANY_REGISTRATION.toString, firstPeriod, new File(s"conf/sample/${firstPeriod}/sbr-2500-ent-ch-data.csv").toURI.toURL.toExternalForm),
+      List[String](UnitType.VAT.toString, firstPeriod, new File(s"conf/sample/${firstPeriod}/vat_data.csv").toURI.toURL.toExternalForm),
+      List[String](UnitType.PAYE.toString, firstPeriod, new File(s"conf/sample/${firstPeriod}/paye_data.csv").toURI.toURL.toExternalForm),
+      List[String](UnitType.COMPANY_REGISTRATION.toString, secondPeriod, new File(s"conf/sample/${secondPeriod}/sbr-2500-ent-ch-data.csv").toURI.toURL.toExternalForm),
+      List[String](UnitType.VAT.toString, secondPeriod, new File(s"conf/sample/${secondPeriod}/vat_data.csv").toURI.toURL.toExternalForm),
+      List[String](UnitType.PAYE.toString, secondPeriod, new File(s"conf/sample/${secondPeriod}/paye_data.csv").toURI.toURL.toExternalForm)
     ).foreach(arg => {
         Logger.info(s"Loading CSV [${arg(2)}] into HBase for period [${arg(1)}] and type [${arg(0)}]...")
         ToolRunner.run(HBaseConnector.getInstance().getConfiguration(), bulkLoader, arg.toArray)
