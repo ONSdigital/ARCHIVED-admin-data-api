@@ -35,6 +35,7 @@ pipeline {
                 sh 'rm -rf conf/sample/paye_data.csv'
                 sh 'cp gitlab/dev/data/sbr-2500-ent-vat-data.csv conf/sample/vat_data.csv'
                 sh 'cp gitlab/dev/data/sbr-2500-ent-paye-data.csv conf/sample/paye_data.csv'
+                sh 'cp gitlab/dev/conf/* conf'
 
                 sh '''
                 $SBT clean compile "project api" universal:packageBin coverage test coverageReport
