@@ -76,11 +76,6 @@ lazy val api = (project in file("."))
     buildInfoOptions += BuildInfoOption.ToJson,
     buildInfoOptions += BuildInfoOption.BuildTime,
     buildInfoPackage := "controllers",
-    // After universal:packageBin has run, the csv files cannot be found, so need to move them to the right place.
-    mappings in Universal += file("conf/sample/sbr-2500-ent-ch-data.csv") -> "bin/conf/sample/sbr-2500-ent-ch-data.csv",
-    mappings in Universal += file("conf/sample/vat_data.csv") -> "bin/conf/sample/vat_data.csv",
-    mappings in Universal += file("conf/sample/paye_data.csv") -> "bin/conf/sample/paye_data.csv",
-    mappings in Universal += file("conf/sample/company_house_data.csv") -> "bin/conf/sample/company_house_data.csv",
     libraryDependencies ++= Seq (
       filters,
       jdbc,

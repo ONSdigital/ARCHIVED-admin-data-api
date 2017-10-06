@@ -31,12 +31,17 @@ pipeline {
                     git(url: "$GITLAB_URL/StatBusReg/sbr-admin-data-api.git", credentialsId: 'sbr-gitlab-id', branch: 'develop')
                 }
                 // Replace fake VAT/PAYE data with real data
-                sh 'rm -rf conf/sample/vat_data.csv'
-                sh 'rm -rf conf/sample/paye_data.csv'
-                sh 'cp gitlab/dev/data/sbr-2500-ent-vat-data.csv conf/sample/vat_data.csv'
-                sh 'cp gitlab/dev/data/sbr-2500-ent-paye-data.csv conf/sample/paye_data.csv'
+                sh 'rm -rf conf/sample/201706/vat_data.csv'
+                sh 'rm -rf conf/sample/201706/paye_data.csv'
+                sh 'rm -rf conf/sample/201708/vat_data.csv'
+                sh 'rm -rf conf/sample/201708/paye_data.csv'
+                // Copy over real data
+                sh 'cp gitlab/dev/data/201706/sbr-2500-ent-vat-data.csv conf/sample/201706/vat_data.csv'
+                sh 'cp gitlab/dev/data/201706/sbr-2500-ent-paye-data.csv conf/sample/201706/paye_data.csv'
+                sh 'cp gitlab/dev/data/201708/sbr-2500-ent-vat-data.csv conf/sample/201708/vat_data.csv'
+                sh 'cp gitlab/dev/data/201708/sbr-2500-ent-paye-data.csv conf/sample/201708/paye_data.csv'
                 sh 'cp gitlab/dev/conf/* conf'
-
+    
                 sh '''
                 $SBT clean compile "project api" universal:packageBin coverage test coverageReport
                 '''
