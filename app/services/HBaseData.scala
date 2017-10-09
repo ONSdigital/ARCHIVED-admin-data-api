@@ -6,9 +6,14 @@ import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.Config
 
-import models.{ SearchKeys, UnitType }
+import models.SearchKeys
 import org.apache.hadoop.util.ToolRunner
 import play.api.Logger
+
+import uk.gov.ons.sbr.data.controller.AdminDataController
+import uk.gov.ons.sbr.data.domain.UnitType
+import uk.gov.ons.sbr.data.hbase.load.BulkLoader
+import uk.gov.ons.sbr.data.hbase.HBaseConnector
 
 import utils.Utilities._
 
