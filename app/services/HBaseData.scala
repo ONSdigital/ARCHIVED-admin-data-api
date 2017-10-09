@@ -35,10 +35,10 @@ class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends Da
     val firstPeriod = "201706"
     val secondPeriod = "201708"
     List(
-      List[String](UnitType.COMPANY_REGISTRATION.toString, firstPeriod, new File(s"conf/sample/${firstPeriod}/sbr-2500-ent-ch-data.csv").toURI.toURL.toExternalForm),
+      List[String](UnitType.COMPANY_REGISTRATION.toString, firstPeriod, new File(s"conf/sample/sbr-2500-ent-ch-data.csv").toURI.toURL.toExternalForm),
       List[String](UnitType.VAT.toString, firstPeriod, new File(s"conf/sample/${firstPeriod}/vat_data.csv").toURI.toURL.toExternalForm),
       List[String](UnitType.PAYE.toString, firstPeriod, new File(s"conf/sample/${firstPeriod}/paye_data.csv").toURI.toURL.toExternalForm),
-      List[String](UnitType.COMPANY_REGISTRATION.toString, secondPeriod, new File(s"conf/sample/${secondPeriod}/sbr-2500-ent-ch-data.csv").toURI.toURL.toExternalForm),
+      List[String](UnitType.COMPANY_REGISTRATION.toString, secondPeriod, new File(s"conf/sample/sbr-2500-ent-ch-data.csv").toURI.toURL.toExternalForm),
       List[String](UnitType.VAT.toString, secondPeriod, new File(s"conf/sample/${secondPeriod}/vat_data.csv").toURI.toURL.toExternalForm),
       List[String](UnitType.PAYE.toString, secondPeriod, new File(s"conf/sample/${secondPeriod}/paye_data.csv").toURI.toURL.toExternalForm)
     ).foreach(arg => {
