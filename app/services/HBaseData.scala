@@ -2,11 +2,11 @@ package services
 
 import java.io.File
 import java.time.YearMonth
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.Config
 
-import models.{SearchKeys, UnitType}
+import models.{ SearchKeys, UnitType }
 import org.apache.hadoop.util.ToolRunner
 import play.api.Logger
 
