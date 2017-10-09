@@ -2,18 +2,13 @@ package services
 
 import java.io.File
 import java.time.YearMonth
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
 import com.typesafe.config.Config
 
-import models.SearchKeys
+import models.{SearchKeys, UnitType}
 import org.apache.hadoop.util.ToolRunner
 import play.api.Logger
-
-import uk.gov.ons.sbr.data.controller.AdminDataController
-import uk.gov.ons.sbr.data.domain.UnitType
-import uk.gov.ons.sbr.data.hbase.load.BulkLoader
-import uk.gov.ons.sbr.data.hbase.HBaseConnector
 
 import utils.Utilities._
 
