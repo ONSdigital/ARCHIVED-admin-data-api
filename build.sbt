@@ -76,6 +76,11 @@ lazy val api = (project in file("."))
     buildInfoOptions += BuildInfoOption.ToJson,
     buildInfoOptions += BuildInfoOption.BuildTime,
     buildInfoPackage := "controllers",
+    // Run with proper default env vars set for hbaseInMemory
+    javaOptions in Universal ++= Seq(
+      "-Dsource=hbaseInMemory",
+      "-Dsbr.hbase.inmemory=true"
+    ),
     libraryDependencies ++= Seq (
       filters,
       jdbc,
