@@ -34,7 +34,7 @@ class HBaseData @Inject() (val loadData: Boolean, val config: Config) extends Da
     val bulkLoader = new BulkLoader()
     val firstPeriod = "201706"
     val secondPeriod = "201708"
-
+    
     List(
       List[String](UnitType.COMPANY_REGISTRATION.toString, firstPeriod, new File(s"conf/sample/sbr-2500-ent-ch-data.csv").toURI.toURL.toExternalForm),
       List[String](UnitType.VAT.toString, firstPeriod, new File(s"conf/sample/${firstPeriod}/vat_data.csv").toURI.toURL.toExternalForm),
