@@ -1,11 +1,14 @@
 package services
 
+import java.io.File
 import java.time.YearMonth
 import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.Config
+
 import models._
 import play.api.Logger
+
 import utils.Utilities._
 
 /**
@@ -14,6 +17,7 @@ import utils.Utilities._
  */
 @Singleton
 class CSVData @Inject() (implicit val config: Config) extends DataAccess {
+
   val ch = csvToCaseClass(config.getString("chFilename"), "company")
   val vat = csvToCaseClass(config.getString("vatFilename"), "vat")
   val paye = csvToCaseClass(config.getString("payeFilename"), "paye")
