@@ -2,7 +2,7 @@ package services
 
 import java.io.File
 import java.time.YearMonth
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.Config
 
@@ -19,7 +19,7 @@ import utils.Utilities._
 class CSVData @Inject() (implicit val config: Config) extends DataAccess {
 
   val firstPeriod = "201706"
-  val ch = csvToCaseClass(new File(s"conf/sample/${firstPeriod}/sbr-2500-ent-ch-data.csv").toURI.toURL.toExternalForm, "company")
+  val ch = csvToCaseClass(new File(s"conf/sample/sbr-2500-ent-ch-data.csv").toURI.toURL.toExternalForm, "company")
   val vat = csvToCaseClass(new File(s"conf/sample/${firstPeriod}/vat_data.csv").toURI.toURL.toExternalForm, "vat")
   val paye = csvToCaseClass(new File(s"conf/sample/${firstPeriod}/paye_data.csv").toURI.toURL.toExternalForm, "paye")
 
