@@ -1,13 +1,29 @@
 #!groovy
-@Library('jenkins-pipeline-shared@develop') _
+@Library('jenkins-pipeline-shared@feature/new-cf') _
 
 pipeline {
-    agent any
+    environment {
+        RELEASE_TYPE = "PATCH"
+
+        BRANCH_DEV = "develop"
+        BRANCH_TEST = "release"
+        BRANCH_PROD = "master"
+
+        DEPLOY_DEV = "dev"
+        DEPLOY_TEST = "test"
+        DEPLOY_PROD = "prod"
+
+        GIT_TYPE = "Github"
+        GIT_CREDS = "github-sbr-user"
+          
+        CF_PROJECT = "SBR"
+    }
     options {
         skipDefaultCheckout()
         buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
         timeout(time: 30, unit: 'MINUTES')
     }
+    agent any
     stages {
         stage('Checkout') {
             agent any
@@ -203,8 +219,9 @@ pipeline {
 }
 
 def deploy () {
+    cf_env = "${env.DEPLOY_NAME}".capitalize()
     echo "Deploying Api app to ${env.DEPLOY_NAME}"
     withCredentials([string(credentialsId: "sbr-api-dev-secret-key", variable: 'APPLICATION_SECRET')]) {
-        deployToCloudFoundry("cloud-foundry-sbr-${env.DEPLOY_NAME}-user", 'sbr', "${env.DEPLOY_NAME}", "${env.DEPLOY_NAME}-sbr-admin-data-api", "${env.DEPLOY_NAME}-ons-sbr-admin-data-api.zip", "gitlab/${env.DEPLOY_NAME}/manifest.yml")
+        deployToCloudFoundry("sbr-${env.DEPLOY_NAME}-cf", '${CF_PROJECT}', "${cf_env}", "${env.DEPLOY_NAME}-sbr-admin-data-api", "${env.DEPLOY_NAME}-ons-sbr-admin-data-api.zip", "gitlab/${env.DEPLOY_NAME}/manifest.yml")
     }
 }
