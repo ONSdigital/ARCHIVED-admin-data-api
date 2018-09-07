@@ -1,6 +1,7 @@
 import com.google.inject.AbstractModule
 
 import com.typesafe.config.{ Config, ConfigFactory }
+import kamon.Kamon
 import play.api.{ Configuration, Environment }
 import config.SbrConfigManager
 import services._
@@ -28,4 +29,5 @@ class Module(environment: Environment, configuration: Configuration) extends Abs
       case "hiveLocal" => bind(classOf[DataAccess]).to(classOf[HiveData])
     }
   }
+  Kamon.loadReportersFromConfig()
 }

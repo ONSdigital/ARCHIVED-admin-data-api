@@ -53,7 +53,7 @@ lazy val commonSettings = Seq (
 )
 
 lazy val api = (project in file("."))
-  .enablePlugins(BuildInfoPlugin, GitVersioning, GitBranchPrompt, PlayScala)
+  .enablePlugins(BuildInfoPlugin, GitVersioning, GitBranchPrompt, PlayScala, JavaAgent)
   .settings(commonSettings: _*)
   .settings(
     scalaVersion := Versions.scala,
@@ -79,14 +79,19 @@ lazy val api = (project in file("."))
     // Run with proper default env vars set for hbaseInMemory
     javaOptions in Universal ++= Seq(
       "-Dsource=hbaseInMemory",
-      "-Dsbr.hbase.inmemory=true"
+      "-Dsbr.hbase.inmemory=true",
+      "-Dorg.aspectj.tracing.factory=default"
     ),
+    javaAgents += "org.aspectj" % "aspectjweaver" % "1.8.13",
     libraryDependencies ++= Seq (
       filters,
       jdbc,
       "org.webjars"                  %%    "webjars-play"        %    "2.5.0-3",
       "com.typesafe.scala-logging"   %%    "scala-logging"       %    "3.5.0",
       "org.scalatestplus.play"       %%    "scalatestplus-play"  %    "2.0.0"           % Test,
+      "io.kamon"                     %%    "kamon-play-2.5"      %    "1.0.1",
+      "io.kamon"                     %%    "kamon-zipkin"        %    "1.0.0",
+      "io.kamon"                     %%    "kamon-logback"       %    "1.0.0",
       "io.swagger"                   %%    "swagger-play2"       %    "1.5.3",
       "org.webjars"                  %     "swagger-ui"          %    "2.2.10-1",
       "org.apache.hive"              %     "hive-jdbc"           %    "1.2.1",
