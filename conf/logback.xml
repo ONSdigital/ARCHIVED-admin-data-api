@@ -16,7 +16,6 @@
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>%date %highlight(%-5level) [%traceID] [%logger{16}] - %m%n%xException{10}</pattern>
-      <pattern>%coloredLevel %logger{15} - %message%n%xException{10}</pattern>
     </encoder>
   </appender>
 
